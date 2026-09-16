@@ -1,0 +1,66 @@
+{
+  "$schema": "../schemas/component/v1.schema.json",
+  "components": [
+    {
+      "name": "CheckboxInput",
+      "tokens": ["component.checkbox-input.base"],
+      "content": "parts",
+      "layout": {
+        "type": "flex",
+        "direction": "row",
+        "justify": "start",
+        "align": "center"
+      },
+      "features": {
+        "interactive": true
+      },
+      "slots": {
+        "feedback": {
+          "required": true,
+          "for": "CheckboxInputFeedback"
+        },
+        "label": {
+          "required": true,
+          "for": "CheckboxInputLabel"
+        }
+      }
+    },
+    {
+      "name": "CheckboxInputFeedback",
+      "content": "parts",
+      "tokens": ["component.checkbox-input.feedback.base"],
+      "slots": {
+        "box": {
+          "required": true,
+          "for": "CheckboxInputFeedbackBox"
+        }
+      }
+    },
+    {
+      "name": "CheckboxInputFeedbackBox",
+      "content": "parts",
+      "tokens": ["component.checkbox-input.feedback.box.base"],
+      "slots": {
+        "icon": {
+          "required": false,
+          "for": ["CheckboxInputFeedbackBoxCheck", "CheckboxInputFeedbackBoxDash"]
+        }
+      }
+    },
+    {
+      "name": "CheckboxInputFeedbackBoxCheck",
+      "content": "illustration",
+      "tokens": ["component.checkbox-input.feedback.box.check"]
+    },
+    {
+      "name": "CheckboxInputFeedbackBoxDash",
+      "content": "illustration",
+      "tokens": ["component.checkbox-input.feedback.box.dash"]
+    },
+    {
+      "name": "CheckboxInputLabel",
+      "content": "text",
+      "tokens": ["component.checkbox-input.label"]
+    }
+  ]
+}

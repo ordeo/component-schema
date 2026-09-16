@@ -1,0 +1,48 @@
+{
+  "$schema": "../schemas/component/v1.schema.json",
+  "components": [
+    {
+      "name": "Button",
+      "tokens": ["component.button.base"],
+      "content": "parts",
+      "layout": {
+        "type": "flex",
+        "direction": "row",
+        "justify": "center",
+        "align": "center"
+      },
+      "features": {
+        "interactive": true
+      },
+      "slots": {
+        "label": {
+          "required": false,
+          "for": "ButtonLabel"
+        },
+        "icon": {
+          "required": false,
+          "for": "ButtonIcon"
+        },
+        "spinner": {
+          "required": false,
+          "for": "ButtonSpinner"
+        }
+      }
+    },
+    {
+      "name": "ButtonIcon",
+      "content": "illustration",
+      "tokens": ["component.button.icon"]
+    },
+    {
+      "name": "ButtonLabel",
+      "content": "text",
+      "tokens": ["component.button.label"]
+    },
+    {
+      "name": "ButtonSpinner",
+      "content": "illustration",
+      "tokens": ["component.button.spinner"]
+    }
+  ]
+}

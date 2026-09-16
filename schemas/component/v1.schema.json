@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ordeo.github.io/component-schema/component/v1.schema.json",
+  "title": "Ordeo component layout",
+  "description": "Describes the composition and layout of one component and its parts. Tokens hold the styling; this file holds what the tokens cannot: which parts exist, how they nest, and how they are laid out. It is platform neutral and is consumed by tooling that generates the platform-specific code.",
+  "type": "object",
+  "required": ["components"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path or URL of this schema, so the IDE can validate the file."
+    },
+    "components": {
+      "type": "array",
+      "description": "Every renderable unit of this component. The first entry is the root; the rest are the parts it (or another part) references through slots. Each entry becomes one component in the generated code.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "component": {
+      "type": "object",
+      "description": "One renderable unit: the root component or one of its parts.",
+      "required": ["name", "content", "tokens"],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/component-name",
+          "description": "Unique name of this unit in PascalCase. Parts are prefixed with the name of the unit that contains them, e.g. `ButtonIcon` inside `Button`."
+        },
+        "content": {
+          "type": "string",
+          "description": "What this unit renders. `parts`: a container for other units, filled through `slots`. `text`: a run of text. `illustration`: a non-text visual such as an icon or spinner.",
+          "enum": ["parts", "text", "illustration"]
+        },
+        "tokens": {
+          "type": "array",
+          "description": "Token paths (dot separated, as in the token files) whose styles apply to this unit, e.g. `component.button.base`.",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token-path"
+          }
+        },
+        "layout": {
+          "$ref": "#/$defs/layout"
+        },
+        "features": {
+          "$ref": "#/$defs/features"
+        },
+        "slots": {
+          "$ref": "#/$defs/slots"
+        }
+      },
+      "additionalProperties": false,
+      "if": {
+        "required": ["content"],
+        "properties": {
+          "content": {
+            "const": "parts"
+          }
+        }
+      },
+      "then": {
+        "required": ["slots"],
+        "properties": {
+          "slots": {
+            "$ref": "#/$defs/slots"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "slots": false
+        }
+      }
+    },
+    "component-name": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z0-9]*$"
+    },
+    "token-path": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$"
+    },
+    "layout": {
+      "type": "object",
+      "description": "How this unit arranges the parts in its slots. Omit it for units that have nothing to arrange.",
+      "required": ["type", "direction", "justify", "align"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Layout model. `flex` places the parts in a single line along `direction`.",
+          "enum": ["flex"]
+        },
+        "direction": {
+          "type": "string",
+          "description": "Main axis of the layout.",
+          "enum": ["row", "column"]
+        },
+        "justify": {
+          "type": "string",
+          "description": "Distribution of the parts along the main axis.",
+          "enum": ["start", "center", "end", "space-between", "space-around", "space-evenly"]
+        },
+        "align": {
+          "type": "string",
+          "description": "Alignment of the parts on the cross axis.",
+          "enum": ["start", "center", "end", "stretch"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "features": {
+      "type": "object",
+      "description": "Behavioural traits the generated code has to account for.",
+      "properties": {
+        "interactive": {
+          "type": "boolean",
+          "description": "The unit reacts to user input and needs interaction states (hover, focus, pressed, disabled)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "slots": {
+      "type": "object",
+      "description": "Named places where the consumer supplies a part. Keys are the slot names in camelCase. Only allowed when `content` is `parts`.",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][A-Za-z0-9]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/slot"
+      }
+    },
+    "slot": {
+      "type": "object",
+      "required": ["required", "for"],
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "description": "Whether the consumer must fill this slot."
+        },
+        "for": {
+          "description": "Name of the unit that fills this slot, or a list of units when more than one may fill it. Must match the `name` of a unit in this file.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/component-name"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/component-name"
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
