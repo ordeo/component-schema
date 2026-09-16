@@ -1,0 +1,20 @@
+{
+  "name": "@ordeo/component-schema",
+  "version": "1.0.0",
+  "description": "JSON Schemas for Ordeo component descriptions",
+  "type": "module",
+  "files": [
+    "schemas"
+  ],
+  "exports": {
+    "./component/v1": "./schemas/component/v1.schema.json",
+    "./schemas/*": "./schemas/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ordeo/component-schema.git"
+  },
+  "homepage": "https://ordeo.github.io/component-schema/",
+  "author": "Ordeo",
+  "license": "ISC"
+}
