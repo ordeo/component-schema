@@ -44,6 +44,12 @@
             "$ref": "#/$defs/token-path"
           }
         },
+        "description": {
+          "type": "string",
+          "description": "What this unit is for, in prose, for whoever meets it without the file: why it exists, what it is measured against, and the decisions a reader would otherwise have to reconstruct from the tokens. It is the text a design tool shows beside the component and the comment a generator can carry into code, so it is written for a human and never restates the keys around it.",
+          "minLength": 1,
+          "maxLength": 4000
+        },
         "layout": {
           "$ref": "#/$defs/layout"
         },

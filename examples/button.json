@@ -3,6 +3,7 @@
   "components": [
     {
       "name": "Button",
+      "description": "A control that starts an action, named by its label.",
       "tokens": ["component.button.base"],
       "content": "parts",
       "layout": {
@@ -31,16 +32,19 @@
     },
     {
       "name": "ButtonIcon",
+      "description": "The icon a button carries beside its label.",
       "content": "illustration",
       "tokens": ["component.button.icon"]
     },
     {
       "name": "ButtonLabel",
+      "description": "The text that names the action.",
       "content": "text",
       "tokens": ["component.button.label"]
     },
     {
       "name": "ButtonSpinner",
+      "description": "The busy mark shown while the action runs.",
       "content": "illustration",
       "tokens": ["component.button.spinner"]
     }

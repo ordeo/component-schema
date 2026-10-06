@@ -3,6 +3,7 @@
   "components": [
     {
       "name": "CheckboxInput",
+      "description": "A checkbox with its label, for turning one option on or off.",
       "tokens": ["component.checkbox-input.base"],
       "content": "parts",
       "layout": {
@@ -27,6 +28,7 @@
     },
     {
       "name": "CheckboxInputFeedback",
+      "description": "The halo around the box that responds to pointer and focus.",
       "content": "parts",
       "tokens": ["component.checkbox-input.feedback.base"],
       "slots": {
@@ -38,6 +40,7 @@
     },
     {
       "name": "CheckboxInputFeedbackBox",
+      "description": "The square that shows whether the option is checked.",
       "content": "parts",
       "tokens": ["component.checkbox-input.feedback.box.base"],
       "slots": {
@@ -49,16 +52,19 @@
     },
     {
       "name": "CheckboxInputFeedbackBoxCheck",
+      "description": "The tick that marks a checked box.",
       "content": "illustration",
       "tokens": ["component.checkbox-input.feedback.box.check"]
     },
     {
       "name": "CheckboxInputFeedbackBoxDash",
+      "description": "The bar that marks a partly checked box.",
       "content": "illustration",
       "tokens": ["component.checkbox-input.feedback.box.dash"]
     },
     {
       "name": "CheckboxInputLabel",
+      "description": "The text that names the option.",
       "content": "text",
       "tokens": ["component.checkbox-input.label"]
     }
