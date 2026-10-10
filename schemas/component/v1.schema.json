@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ordeo.github.io/component-schema/component/v1.schema.json",
   "title": "Ordeo component layout",
-  "description": "Describes the composition and layout of one component and its parts. Tokens hold the styling; this file holds what the tokens cannot: which parts exist, how they nest, and how they are laid out. It is platform neutral and is consumed by tooling that generates the platform-specific code.",
+  "description": "Describes the composition and layout of one component and its parts. Tokens hold the styling and every measure (gap, margin, inset); this file holds what the tokens cannot: which parts exist, what they hold, how they nest, and how they are placed and laid out. It is platform neutral and is consumed by tooling that generates the platform-specific code.",
   "type": "object",
   "required": ["components"],
   "properties": {
@@ -31,9 +31,7 @@
           "description": "Unique name of this unit in PascalCase. Parts are prefixed with the name of the unit that contains them, e.g. `ButtonIcon` inside `Button`."
         },
         "content": {
-          "type": "string",
-          "description": "What this unit renders. `parts`: a container for other units, filled through `slots`. `text`: a run of text. `illustration`: a non-text visual such as an icon or spinner.",
-          "enum": ["parts", "text", "illustration"]
+          "$ref": "#/$defs/content"
         },
         "tokens": {
           "type": "array",
@@ -44,20 +42,24 @@
             "$ref": "#/$defs/token-path"
           }
         },
+        "variants": {
+          "$ref": "#/$defs/variants"
+        },
+        "states": {
+          "$ref": "#/$defs/states"
+        },
         "description": {
           "type": "string",
           "description": "What this unit is for, in prose, for whoever meets it without the file: why it exists, what it is measured against, and the decisions a reader would otherwise have to reconstruct from the tokens. It is the text a design tool shows beside the component and the comment a generator can carry into code, so it is written for a human and never restates the keys around it.",
           "minLength": 1,
           "maxLength": 4000
         },
+        "placement": {
+          "$ref": "#/$defs/placement",
+          "description": "Where this unit is drawn inside whatever holds it, wherever it is placed. A slot's own `placement` overrides it. Omitted, the unit is in the flow."
+        },
         "layout": {
           "$ref": "#/$defs/layout"
-        },
-        "features": {
-          "$ref": "#/$defs/features"
-        },
-        "slots": {
-          "$ref": "#/$defs/slots"
         }
       },
       "additionalProperties": false,
@@ -65,21 +67,20 @@
         "required": ["content"],
         "properties": {
           "content": {
-            "const": "parts"
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "parts"
+              }
+            }
           }
         }
       },
-      "then": {
-        "required": ["slots"],
-        "properties": {
-          "slots": {
-            "$ref": "#/$defs/slots"
-          }
-        }
-      },
+      "then": true,
       "else": {
         "properties": {
-          "slots": false
+          "layout": false
         }
       }
     },
@@ -91,15 +92,140 @@
       "type": "string",
       "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$"
     },
-    "layout": {
+    "content": {
+      "description": "What this unit renders. `text`: a run of text. `illustration`: a non-text visual such as an icon or a spinner. `image`: a picture the consumer supplies, such as a photo. `parts`: a container for other units, filled through `slots`. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say; `parts` always has slots and so has no shorthand.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["text", "illustration", "image"]
+        },
+        {
+          "$ref": "#/$defs/text-content"
+        },
+        {
+          "$ref": "#/$defs/illustration-content"
+        },
+        {
+          "$ref": "#/$defs/image-content"
+        },
+        {
+          "$ref": "#/$defs/parts-content"
+        }
+      ]
+    },
+    "text-content": {
       "type": "object",
-      "description": "How this unit arranges the parts in its slots. Omit it for units that have nothing to arrange.",
+      "description": "A run of text the consumer supplies.",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "const": "text"
+        },
+        "wrap": {
+          "type": "boolean",
+          "description": "Whether the text breaks onto further lines when it does not fit. `false` keeps it on one line and ends it with an ellipsis.",
+          "default": true
+        },
+        "maxLines": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The most lines the text takes; the last one ends with an ellipsis. Omitted, the text takes as many lines as it needs. Only for text that wraps."
+        }
+      },
+      "additionalProperties": false,
+      "not": {
+        "required": ["wrap", "maxLines"],
+        "properties": {
+          "wrap": {
+            "const": false
+          }
+        }
+      }
+    },
+    "illustration-content": {
+      "type": "object",
+      "description": "A non-text visual.",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "const": "illustration"
+        },
+        "name": {
+          "$ref": "#/$defs/component-name",
+          "description": "The component this unit draws, e.g. `Check` or `Spinner`; icons are components too. Omitted, the consumer picks what is drawn, and a preview shows a placeholder."
+        }
+      },
+      "additionalProperties": false
+    },
+    "parts-content": {
+      "type": "object",
+      "description": "A container for other units, filled through its slots.",
+      "required": ["type", "slots"],
+      "properties": {
+        "type": {
+          "const": "parts"
+        },
+        "slots": {
+          "$ref": "#/$defs/slots"
+        }
+      },
+      "additionalProperties": false
+    },
+    "placement": {
+      "description": "Where a unit is drawn. `flow`: one of the parts its holder's `layout` arranges, sized and spaced with its siblings. `overlay`: taken out of the flow and drawn over the holder's box, where it takes no space and no gap; `inline` and `block` say where on the box it sits, its offsets come from tokens. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["flow", "overlay"]
+        },
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "const": "flow"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "const": "overlay"
+            },
+            "inline": {
+              "$ref": "#/$defs/overlay-alignment",
+              "description": "Where the part sits along the holder's inline axis (left to right in a left-to-right script)."
+            },
+            "block": {
+              "$ref": "#/$defs/overlay-alignment",
+              "description": "Where the part sits along the holder's block axis (top to bottom)."
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "layout": {
+      "description": "How this unit arranges the parts in its slots. Only for units whose content is `parts`; omit it when there is nothing to arrange. Gaps come from tokens.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/flow-layout"
+        },
+        {
+          "$ref": "#/$defs/grid-layout"
+        }
+      ]
+    },
+    "flow-layout": {
+      "type": "object",
+      "description": "Places the parts in a single line along `direction`.",
       "required": ["type", "direction", "justify", "align"],
       "properties": {
         "type": {
-          "type": "string",
-          "description": "Layout model. `flex` places the parts in a single line along `direction`.",
-          "enum": ["flex"]
+          "const": "flow"
         },
         "direction": {
           "type": "string",
@@ -115,24 +241,46 @@
           "type": "string",
           "description": "Alignment of the parts on the cross axis.",
           "enum": ["start", "center", "end", "stretch"]
+        },
+        "wrap": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the parts move onto a further line when they do not fit."
         }
       },
       "additionalProperties": false
     },
-    "features": {
+    "grid-layout": {
       "type": "object",
-      "description": "Behavioural traits the generated code has to account for.",
+      "description": "Places the parts in rows of equal columns, in slot order, starting a new row when one is full.",
+      "required": ["type", "columns"],
       "properties": {
-        "interactive": {
-          "type": "boolean",
-          "description": "The unit reacts to user input and needs interaction states (hover, focus, pressed, disabled)."
+        "type": {
+          "const": "grid"
+        },
+        "columns": {
+          "type": "integer",
+          "description": "How many columns of equal width each row has.",
+          "minimum": 1
+        },
+        "justify": {
+          "type": "string",
+          "description": "Alignment of each part inside its cell along the row.",
+          "enum": ["start", "center", "end", "stretch"],
+          "default": "stretch"
+        },
+        "align": {
+          "type": "string",
+          "description": "Alignment of each part inside its cell across the row.",
+          "enum": ["start", "center", "end", "stretch"],
+          "default": "stretch"
         }
       },
       "additionalProperties": false
     },
     "slots": {
       "type": "object",
-      "description": "Named places where the consumer supplies a part. Keys are the slot names in camelCase. Only allowed when `content` is `parts`.",
+      "description": "Named places where the consumer supplies a part. Keys are the slot names in camelCase. An optional slot gets a switch named `show<Slot>`.",
       "minProperties": 1,
       "propertyNames": {
         "pattern": "^[a-z][A-Za-z0-9]*$"
@@ -150,23 +298,188 @@
           "description": "Whether the consumer must fill this slot."
         },
         "for": {
-          "description": "Name of the unit that fills this slot, or a list of units when more than one may fill it. Must match the `name` of a unit in this file.",
+          "description": "What fills this slot: the name of a unit in this file or of another component, or a list of them. The first entry is the default. `*` opens the slot to anything: alone, the slot has no default and a preview shows a placeholder; after a name (`[\"ButtonIcon\", \"*\"]`), that unit is the default and anything may replace it.",
           "oneOf": [
             {
-              "$ref": "#/$defs/component-name"
+              "$ref": "#/$defs/slot-target"
             },
             {
               "type": "array",
               "minItems": 1,
               "uniqueItems": true,
               "items": {
-                "$ref": "#/$defs/component-name"
+                "$ref": "#/$defs/slot-target"
               }
             }
           ]
+        },
+        "placement": {
+          "$ref": "#/$defs/placement",
+          "description": "Where the part in this slot is drawn, overriding the part's own `placement`."
+        },
+        "sizing": {
+          "type": "string",
+          "enum": ["hug", "fill"],
+          "default": "hug",
+          "description": "How the part in this slot is sized along its holder's `flow` direction. `hug`: as big as its content. `fill`: takes the space its siblings leave. Only for parts in the flow."
+        },
+        "multiple": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the slot holds a list of parts instead of one, such as the tabs of a tab list. The parts are laid out by the holder's `layout`, in the order the consumer gives them."
+        },
+        "config": {
+          "$ref": "#/$defs/slot-config"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["linked", "own"],
+          "default": "linked",
+          "description": "Whose interaction states (hovered, pressed, focused, …) the part in this slot shows. `linked`: its holder's, so a card's title shows the card's hover. `own`: its own, because it takes input itself, like each tab of a tab list or a button inside a card; its own parts then link to it. A unit takes input when it is a component's first unit or sits in an `own` slot."
         }
       },
       "additionalProperties": false
+    },
+    "slot-target": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/component-name"
+        },
+        {
+          "const": "*"
+        }
+      ]
+    },
+    "image-content": {
+      "type": "object",
+      "description": "A picture the consumer supplies, such as a photo or a thumbnail. Unlike an illustration it is content, so it needs a text alternative from the consumer.",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "const": "image"
+        },
+        "fit": {
+          "type": "string",
+          "enum": ["cover", "contain"],
+          "default": "cover",
+          "description": "How the picture fills the unit's box. `cover`: fills it and is cropped to it. `contain`: is shown whole, inside it."
+        }
+      },
+      "additionalProperties": false
+    },
+    "overlay-alignment": {
+      "type": "string",
+      "enum": ["start", "center", "end", "stretch"],
+      "default": "stretch",
+      "description": "`start`, `center` or `end` place the part at that side of the holder's box, at the size it takes. `stretch` spans the whole box: a bar along an edge is `stretch` on one axis and `end` on the other, a wash over the whole box is `stretch` on both."
+    },
+    "variants": {
+      "type": "object",
+      "description": "The axes this unit's tokens branch on, such as `size` or `emphasis`, with the values it has, in the order the axis defines them. Interaction states are not variants; they are listed in `states`. Omitted, the unit looks the same whatever its holder is set to.",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "$ref": "#/$defs/variant-value"
+        }
+      }
+    },
+    "states": {
+      "type": "array",
+      "description": "The interaction states this unit's tokens style, such as `hovered` or `disabled`. They follow the user's interaction and are not picked like variants.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][A-Za-z]*$"
+      }
+    },
+    "slot-config": {
+      "description": "The variants the part in this slot gets from its holder. A list is shorthand for `{ \"inherit\": <list> }`. Only variants are configured: interaction states (hovered, pressed, …) are not variants and always follow the part's own interaction. Omitted, the part gets nothing from its holder.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inherited-axes"
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "properties": {
+            "inherit": {
+              "$ref": "#/$defs/inherited-axes"
+            }
+          },
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/config-value"
+          }
+        }
+      ]
+    },
+    "inherited-axes": {
+      "description": "Axes the part takes from its holder unchanged, by name: the holder's `size` sets the part's `size`. `*` passes every variant axis the two share. An axis that is also set to a value is not inherited.",
+      "oneOf": [
+        {
+          "const": "*"
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          }
+        }
+      ]
+    },
+    "config-value": {
+      "description": "The value one axis of the part gets. A value fixes it, whatever the holder shows. `from` and `map` translate one of the holder's axes: each holder value listed in `map` gives the part's value beside it, and a value not listed passes unchanged.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/variant-value"
+        },
+        {
+          "type": "object",
+          "required": ["from", "map"],
+          "properties": {
+            "from": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$",
+              "description": "The holder's axis that is translated."
+            },
+            "map": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": {
+                "pattern": "^[a-z0-9][a-z0-9-]*$"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/variant-value"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "variant-value": {
+      "description": "One value of an axis: a name such as `md`, or `false`/`true` for an axis that is on or off, such as `destructive`.",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        {
+          "type": "boolean"
+        }
+      ]
     }
   }
 }

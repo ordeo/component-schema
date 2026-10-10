@@ -1,0 +1,258 @@
+{
+  "$schema": "../schemas/component/v1.schema.json",
+  "components": [
+    {
+      "name": "ProductCard",
+      "description": "One product as a single action: its picture, its name and price, the colours it comes in, and what can be done with it.",
+      "tokens": ["component.product-card.base"],
+      "variants": {
+        "size": ["sm", "md"],
+        "elevation": ["none", "raised"]
+      },
+      "states": ["enabled", "hovered", "pressed", "focused", "disabled"],
+      "content": {
+        "type": "parts",
+        "slots": {
+          "media": {
+            "required": true,
+            "for": "ProductCardMedia"
+          },
+          "body": {
+            "required": true,
+            "for": "ProductCardBody",
+            "sizing": "fill"
+          },
+          "actions": {
+            "required": false,
+            "for": "ProductCardActions"
+          }
+        }
+      },
+      "layout": {
+        "type": "flow",
+        "direction": "column",
+        "justify": "start",
+        "align": "stretch"
+      }
+    },
+    {
+      "name": "ProductCardMedia",
+      "description": "The picture, with a badge in its top end corner and the favourite button in its bottom end corner.",
+      "tokens": ["component.product-card.media.base"],
+      "variants": {
+        "size": ["sm", "md"]
+      },
+      "content": {
+        "type": "parts",
+        "slots": {
+          "image": {
+            "required": true,
+            "for": "ProductCardMediaImage",
+            "sizing": "fill"
+          },
+          "badge": {
+            "required": false,
+            "for": "Badge",
+            "placement": {
+              "type": "overlay",
+              "inline": "end",
+              "block": "start"
+            },
+            "config": {
+              "emphasis": "high",
+              "size": { "from": "size", "map": { "sm": "xs", "md": "sm" } }
+            }
+          },
+          "favorite": {
+            "required": false,
+            "for": "IconButton",
+            "placement": {
+              "type": "overlay",
+              "inline": "end",
+              "block": "end"
+            },
+            "state": "own",
+            "config": ["size"]
+          }
+        }
+      },
+      "layout": {
+        "type": "flow",
+        "direction": "column",
+        "justify": "start",
+        "align": "stretch"
+      }
+    },
+    {
+      "name": "ProductCardMediaImage",
+      "description": "The product photo, cropped to the frame.",
+      "tokens": ["component.product-card.media.image.base"],
+      "content": {
+        "type": "image",
+        "fit": "cover"
+      }
+    },
+    {
+      "name": "ProductCardBody",
+      "description": "The words under the picture: the brand, the name, the price and the colours.",
+      "tokens": ["component.product-card.body.base"],
+      "variants": {
+        "size": ["sm", "md"]
+      },
+      "content": {
+        "type": "parts",
+        "slots": {
+          "brand": {
+            "required": false,
+            "for": ["ProductCardBodyBrand", "*"]
+          },
+          "title": {
+            "required": true,
+            "for": "ProductCardBodyTitle"
+          },
+          "price": {
+            "required": true,
+            "for": "ProductCardBodyPrice"
+          },
+          "swatches": {
+            "required": false,
+            "for": "ProductCardBodySwatches"
+          },
+          "extra": {
+            "required": false,
+            "for": "*",
+            "config": "*"
+          }
+        }
+      },
+      "layout": {
+        "type": "flow",
+        "direction": "column",
+        "justify": "start",
+        "align": "stretch"
+      }
+    },
+    {
+      "name": "ProductCardBodyBrand",
+      "description": "The brand's mark. The consumer supplies it; any other part may take its place.",
+      "tokens": ["component.product-card.body.brand.base"],
+      "variants": {
+        "size": ["sm", "md"]
+      },
+      "content": "illustration"
+    },
+    {
+      "name": "ProductCardBodyTitle",
+      "description": "The product's name, cut after two lines.",
+      "tokens": ["component.product-card.body.title.base"],
+      "variants": {
+        "size": ["sm", "md"]
+      },
+      "states": ["enabled", "hovered", "disabled"],
+      "content": {
+        "type": "text",
+        "maxLines": 2
+      }
+    },
+    {
+      "name": "ProductCardBodyPrice",
+      "description": "The price, always on one line.",
+      "tokens": ["component.product-card.body.price.base"],
+      "variants": {
+        "size": ["sm", "md"],
+        "discounted": [false, true]
+      },
+      "content": {
+        "type": "text",
+        "wrap": false
+      }
+    },
+    {
+      "name": "ProductCardBodySwatches",
+      "description": "The colours the product comes in, six to a row.",
+      "tokens": ["component.product-card.body.swatches.base"],
+      "content": {
+        "type": "parts",
+        "slots": {
+          "swatch": {
+            "required": true,
+            "for": "ProductCardBodySwatchesSwatch",
+            "multiple": true,
+            "state": "own"
+          }
+        }
+      },
+      "layout": {
+        "type": "grid",
+        "columns": 6,
+        "justify": "center",
+        "align": "center"
+      }
+    },
+    {
+      "name": "ProductCardBodySwatchesSwatch",
+      "description": "One colour. Each swatch can be hovered and picked on its own, so it owns its state; the picked one shows a check.",
+      "tokens": ["component.product-card.body.swatches.swatch.base"],
+      "variants": {
+        "position": ["unselected", "selected"]
+      },
+      "states": ["enabled", "hovered", "pressed", "focused", "disabled"],
+      "content": {
+        "type": "parts",
+        "slots": {
+          "check": {
+            "required": false,
+            "for": "ProductCardBodySwatchesSwatchCheck"
+          }
+        }
+      },
+      "layout": {
+        "type": "flow",
+        "direction": "row",
+        "justify": "center",
+        "align": "center"
+      }
+    },
+    {
+      "name": "ProductCardBodySwatchesSwatchCheck",
+      "description": "The check over a picked swatch. It is drawn over the swatch wherever it is placed.",
+      "tokens": ["component.product-card.body.swatches.swatch.check.base"],
+      "variants": {
+        "position": ["unselected", "selected"]
+      },
+      "content": {
+        "type": "illustration",
+        "name": "Check"
+      },
+      "placement": "overlay"
+    },
+    {
+      "name": "ProductCardActions",
+      "description": "The buttons under the words. They move onto a second line when they do not fit.",
+      "tokens": ["component.product-card.actions.base"],
+      "content": {
+        "type": "parts",
+        "slots": {
+          "action": {
+            "required": true,
+            "for": ["Button", "*"],
+            "multiple": true,
+            "state": "own",
+            "config": {
+              "inherit": ["size"],
+              "emphasis": "low",
+              "destructive": false
+            }
+          }
+        }
+      },
+      "layout": {
+        "type": "flow",
+        "direction": "row",
+        "justify": "start",
+        "align": "center",
+        "wrap": true
+      }
+    }
+  ]
+}

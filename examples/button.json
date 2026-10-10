@@ -5,29 +5,35 @@
       "name": "Button",
       "description": "A control that starts an action, named by its label.",
       "tokens": ["component.button.base"],
-      "content": "parts",
+      "variants": {
+        "destructive": [false, true],
+        "emphasis": ["high", "medium", "low"],
+        "size": ["sm", "md", "lg"]
+      },
+      "states": ["enabled", "hovered", "pressed", "focused", "disabled"],
+      "content": {
+        "type": "parts",
+        "slots": {
+          "label": {
+            "required": false,
+            "for": "ButtonLabel"
+          },
+          "icon": {
+            "required": false,
+            "for": ["ButtonIcon", "*"]
+          },
+          "spinner": {
+            "required": false,
+            "for": "ButtonSpinner",
+            "placement": "overlay"
+          }
+        }
+      },
       "layout": {
-        "type": "flex",
+        "type": "flow",
         "direction": "row",
         "justify": "center",
         "align": "center"
-      },
-      "features": {
-        "interactive": true
-      },
-      "slots": {
-        "label": {
-          "required": false,
-          "for": "ButtonLabel"
-        },
-        "icon": {
-          "required": false,
-          "for": "ButtonIcon"
-        },
-        "spinner": {
-          "required": false,
-          "for": "ButtonSpinner"
-        }
       }
     },
     {
@@ -45,7 +51,10 @@
     {
       "name": "ButtonSpinner",
       "description": "The busy mark shown while the action runs.",
-      "content": "illustration",
+      "content": {
+        "type": "illustration",
+        "name": "Spinner"
+      },
       "tokens": ["component.button.spinner"]
     }
   ]
