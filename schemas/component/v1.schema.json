@@ -93,11 +93,14 @@
       "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$"
     },
     "content": {
-      "description": "What this unit renders. `text`: a run of text. `illustration`: a non-text visual such as an icon or a spinner. `image`: a picture the consumer supplies, such as a photo. `parts`: a container for other units, filled through `slots`. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say; `parts` always has slots and so has no shorthand.",
+      "description": "What this unit renders. `none`: nothing but its own box, styled by its tokens, such as a divider, a track or a scrim. `text`: a run of text. `illustration`: a non-text visual such as an icon or a spinner. `image`: a picture the consumer supplies, such as a photo. `parts`: a container for other units, filled through `slots`. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say; `parts` always has slots and so has no shorthand.",
       "oneOf": [
         {
           "type": "string",
-          "enum": ["text", "illustration", "image"]
+          "enum": ["none", "text", "illustration", "image"]
+        },
+        {
+          "$ref": "#/$defs/none-content"
         },
         {
           "$ref": "#/$defs/text-content"
@@ -112,6 +115,17 @@
           "$ref": "#/$defs/parts-content"
         }
       ]
+    },
+    "none-content": {
+      "type": "object",
+      "description": "Nothing inside the unit: what shows is its own box, drawn by its tokens (fill, border, radius, size).",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "const": "none"
+        }
+      },
+      "additionalProperties": false
     },
     "text-content": {
       "type": "object",

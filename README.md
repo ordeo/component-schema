@@ -45,12 +45,14 @@ there is nothing else to say.
 
 | Type           | Shows                                    | Options                                                        |
 |----------------|------------------------------------------|----------------------------------------------------------------|
+| `none`         | Only its own box, drawn by its tokens    | None. A divider, a track, a skeleton bar, a scrim              |
 | `text`         | A run of text the consumer supplies      | `maxLines` (cut with an ellipsis), `wrap: false` (one line)    |
 | `illustration` | An icon, a spinner, a drawn mark         | `name`: the component it draws, e.g. `Check`. Without one, the consumer picks it, and a preview shows a placeholder |
 | `image`        | A picture the consumer supplies          | `fit`: `cover` (default, cropped) or `contain` (shown whole)   |
 | `parts`        | Other parts, through its `slots`         | `slots` (required, so `parts` has no shorthand)                |
 
 ```json
+"content": "none"
 "content": "illustration"
 "content": { "type": "text", "maxLines": 2 }
 "content": { "type": "parts", "slots": { "label": { "required": true, "for": "ButtonLabel" } } }
@@ -197,7 +199,7 @@ Offsets come from tokens.
 | File                                                       | Shows                                                         |
 |------------------------------------------------------------|---------------------------------------------------------------|
 | [`examples/button.json`](examples/button.json)             | A small component: variants, states, an open slot, an overlay |
-| [`examples/product-card.json`](examples/product-card.json) | Every concept: images, text limits, overlays, a grid, lists, own states, slot config |
+| [`examples/product-card.json`](examples/product-card.json) | Every concept: images, an empty box, text limits, overlays, a grid, lists, own states, slot config |
 
 ## Repository
 

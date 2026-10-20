@@ -50,6 +50,11 @@
             "for": "ProductCardMediaImage",
             "sizing": "fill"
           },
+          "scrim": {
+            "required": false,
+            "for": "ProductCardMediaScrim",
+            "description": "Turn it on when the badge or the favourite button gets lost on a busy photo."
+          },
           "badge": {
             "required": false,
             "for": "Badge",
@@ -92,6 +97,13 @@
         "type": "image",
         "fit": "cover"
       }
+    },
+    {
+      "name": "ProductCardMediaScrim",
+      "description": "A shade over the whole photo, so the badge and the favourite button stay legible on any picture. It is drawn over the photo wherever it is placed.",
+      "tokens": ["component.product-card.media.scrim.base"],
+      "content": "none",
+      "placement": "overlay"
     },
     {
       "name": "ProductCardBody",
