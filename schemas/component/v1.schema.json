@@ -395,7 +395,7 @@
     },
     "variants": {
       "type": "object",
-      "description": "The axes this unit's tokens branch on, such as `size` or `emphasis`, with the values it has, in the order the axis defines them. Interaction states are not variants; they are listed in `states`. Omitted, the unit looks the same whatever its holder is set to.",
+      "description": "The axes the consumer picks on this unit, such as `size`, `emphasis` or `align`, with the values it has, in the order the axis defines them. Most switch the unit's tokens, but an axis need not. Interaction states are not variants; they are listed in `states`. Omitted, the unit looks the same whatever its holder is set to.",
       "minProperties": 1,
       "propertyNames": {
         "pattern": "^[a-z][a-z0-9-]*$"

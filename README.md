@@ -30,7 +30,7 @@ A file holds one component. `components` lists its parts, the root first. Every 
 | `name`        | PascalCase, prefixed with the part that holds it: `ButtonLabel` inside `Button`.         |
 | `tokens`      | The token paths that style the part, e.g. `component.button.label.base`.                 |
 | `content`     | What the part shows. See [Content](#content).                                            |
-| `variants`    | The axes its tokens branch on. See [Variants and states](#variants-and-states).          |
+| `variants`    | The axes the consumer picks. See [Variants and states](#variants-and-states).            |
 | `states`      | The interaction states its tokens style.                                                 |
 | `placement`   | Where it is drawn inside its holder. See [Placement](#placement).                        |
 | `layout`      | How it arranges its own parts. See [Layout](#layout).                                     |
@@ -101,8 +101,9 @@ its first entry is the default. `*` opens the slot to anything:
 
 ## Variants and states
 
-`variants` lists the axes a part's tokens branch on, with their values. An axis that is on or off
-takes booleans:
+`variants` lists the axes the consumer picks on a part, with their values. Most switch the part's
+tokens, but an axis need not: `align` may only change how the part is laid out. An axis that is on
+or off takes booleans:
 
 ```json
 "variants": {
@@ -119,7 +120,8 @@ them, they follow the user's interaction.
 "states": ["enabled", "hovered", "pressed", "focused", "disabled"]
 ```
 
-Both list only what the part's own tokens do, so a part whose look never changes has neither.
+A part that is the same whatever its holder is set to has no `variants`; one whose tokens style no
+interaction has no `states`.
 
 ### Interaction states
 
