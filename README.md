@@ -61,15 +61,28 @@ there is nothing else to say.
 A slot is a named place in a `parts` part where another part goes. Slot names are camelCase. An
 optional slot gets a switch named `show<Slot>` in code.
 
-| Key         | Meaning                                                                                        |
-|-------------|------------------------------------------------------------------------------------------------|
-| `required`  | Whether the consumer must fill it.                                                             |
-| `for`       | What fills it. See below.                                                                      |
-| `multiple`  | `true` for a list of parts, such as the tabs of a tab list. Default `false`.                   |
-| `sizing`    | `hug` (default, as big as its content) or `fill` (takes the space its siblings leave).          |
-| `placement` | Overrides the part's own placement.                                                            |
-| `state`     | `linked` (default) or `own`. See [Interaction states](#interaction-states).                    |
-| `config`    | The variants the held part gets from its holder. See [Configuring a held part](#configuring-a-held-part). |
+| Key           | Meaning                                                                                        |
+|---------------|------------------------------------------------------------------------------------------------|
+| `required`    | Whether the consumer must fill it.                                                             |
+| `for`         | What fills it. See below.                                                                      |
+| `multiple`    | `true` for a list of parts, such as the tabs of a tab list. Default `false`.                   |
+| `sizing`      | `hug` (default, as big as its content) or `fill` (takes the space its siblings leave).         |
+| `placement`   | Overrides the part's own placement.                                                            |
+| `state`       | `linked` (default) or `own`. See [Interaction states](#interaction-states).                    |
+| `config`      | The variants the held part gets from its holder. See [Configuring a held part](#configuring-a-held-part). |
+| `description` | What the place is for, in prose, for whoever fills it: what belongs there, when to leave it empty. |
+
+A slot's `description` speaks about the place, not the part in it, which has its own. It earns its
+keep on open slots (`*`) and optional ones, where the reader has to decide what goes there:
+
+```json
+"extra": {
+  "required": false,
+  "for": "*",
+  "config": "*",
+  "description": "Anything the card needs under the colours, such as a delivery note or a rating."
+}
+```
 
 `for` names a part of this file or another component (`"for": "Badge"`). A list allows several, and
 its first entry is the default. `*` opens the slot to anything:

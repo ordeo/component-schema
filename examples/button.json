@@ -20,12 +20,14 @@
           },
           "icon": {
             "required": false,
-            "for": ["ButtonIcon", "*"]
+            "for": ["ButtonIcon", "*"],
+            "description": "An icon that makes the action quicker to spot. Without a label, the button needs an accessible name from the consumer."
           },
           "spinner": {
             "required": false,
             "for": "ButtonSpinner",
-            "placement": "overlay"
+            "placement": "overlay",
+            "description": "Shown while the action runs, drawn over the label and icon so the button keeps its size."
           }
         }
       },

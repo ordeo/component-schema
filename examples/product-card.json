@@ -72,7 +72,8 @@
               "block": "end"
             },
             "state": "own",
-            "config": ["size"]
+            "config": ["size"],
+            "description": "Saves the product for later without opening it. It takes its own input, so pressing it does not press the card."
           }
         }
       },
@@ -121,7 +122,8 @@
           "extra": {
             "required": false,
             "for": "*",
-            "config": "*"
+            "config": "*",
+            "description": "Anything the card needs under the colours, such as a delivery note or a rating."
           }
         }
       },

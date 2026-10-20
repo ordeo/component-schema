@@ -336,6 +336,12 @@
           "enum": ["linked", "own"],
           "default": "linked",
           "description": "Whose interaction states (hovered, pressed, focused, …) the part in this slot shows. `linked`: its holder's, so a card's title shows the card's hover. `own`: its own, because it takes input itself, like each tab of a tab list or a button inside a card; its own parts then link to it. A unit takes input when it is a component's first unit or sits in an `own` slot."
+        },
+        "description": {
+          "type": "string",
+          "description": "What this place is for, in prose, for whoever fills it without the file: what belongs here, when to leave an optional slot empty, and what an open slot (`*`) expects. It is the text a design tool shows beside the slot and the comment a generator can carry onto its property, so it is written for a human and never restates the keys around it or the description of the part it holds.",
+          "minLength": 1,
+          "maxLength": 4000
         }
       },
       "additionalProperties": false
