@@ -34,7 +34,6 @@ A file holds one component. `components` lists its parts, the root first. Every 
 | `states`      | The interaction states its tokens style.                                                 |
 | `placement`   | Where it is drawn inside its holder. See [Placement](#placement).                        |
 | `layout`      | How it arranges its own parts. See [Layout](#layout).                                     |
-| `inText`      | Whether the component can also sit in running text. See [In text](#in-text).             |
 | `description` | What the part is for, in prose, for a reader who meets it without the file.              |
 
 Only `name`, `tokens` and `content` are required.
@@ -214,32 +213,34 @@ leave along `direction`. In a `grid`, `fill` stretches the part over its cell, w
 `block`. A `phrase` sets its parts like letters, so its slots take no `sizing`; the schema rejects
 it.
 
-Every field but `type` can follow the variants.
+Every layout also takes `block`: its box or its inline form, see [In text](#in-text). Every field but
+`type` can follow the variants.
 
 ## In text
 
-`"inText": true` says a component sits in the line when it is placed in running text, such as a link
-in a paragraph or a badge in a sentence. In a box it still behaves as a box; in the line, its layout
-decides how it sits:
+`block` on a layout says whether the part is a box of its own when it is placed in running text, or
+sits in the line, such as a link in a paragraph or a badge in a sentence. Each layout has a box form
+and an inline form:
 
-| Layout or content                                               | In text                                 | Like (CSS)                                   | Example     |
-|-----------------------------------------------------------------|-----------------------------------------|----------------------------------------------|-------------|
-| `text` content or a `phrase` layout                             | Continues the text and wraps with it    | `inline`                                     | Link        |
-| Anything else (`stack`, `grid`, `illustration`, `image`, `none`) | One piece in the line, moves as a whole | `inline-flex`, `inline-grid`, `inline-block` | Badge, icon |
+| Layout   | `block: true` (default)                | `block: false`                                             | Example |
+|----------|----------------------------------------|------------------------------------------------------------|---------|
+| `stack`  | A box (`flex`)                         | One piece in the line, moves with it (`inline-flex`)       | Badge   |
+| `grid`   | A box (`grid`)                         | One piece in the line, moves with it (`inline-grid`)       |         |
+| `phrase` | A box with a run of text, a paragraph  | Continues the text around it and wraps with it (`inline`)  | Link    |
 
 ```json
-{ "name": "Link", "inText": true, "layout": { "type": "phrase", "align": "center" }, … }
+"layout": { "type": "phrase", "align": "center", "block": false }
 ```
 
-With `false` (the default), a part placed in text breaks it and stands on lines of its own, as a box.
-A `phrase` holder puts every part in its line, whatever its `inText` says.
+A box placed in text breaks it and stands on lines of its own. In a box, every part is a box. A part
+without a layout is in the line by its nature: text continues the run, anything else is one piece.
 
 It can follow the variants. A link that can also stand on its own, as a line of its own under a
-teaser, is in text only when it does not:
+teaser, is a box only then:
 
 ```json
 "variants": { "standalone": [false, true] },
-"inText": { "standalone=false": true, "standalone=true": false }
+"layout": { "type": "phrase", "align": "center", "block": { "standalone=false": false, "standalone=true": true } }
 ```
 
 ## Values that follow variants
@@ -284,7 +285,6 @@ its `placement`, `sizing` and `config` follow the holder's.
 | Every `layout` field but `type`                           | `layout.type`, the `content` type, `tokens`            |
 | `placement`, on the part and on the slot (as a whole)     | Slot `for`, `required`, `multiple`, `interaction`      |
 | Slot `sizing`                                             |                                                        |
-| `inText`                                                  |                                                        |
 | Text `maxLines` and `wrap`                                |                                                        |
 | Each axis in a slot `config`                              |                                                        |
 
@@ -298,7 +298,7 @@ files.
 |------------------------------------------------------------|---------------------------------------------------------------|
 | [`examples/button.json`](examples/button.json)             | A small component: variants, states, an open slot, an overlay |
 | [`examples/button-group.json`](examples/button-group.json) | Values that follow variants, including a combination of two axes |
-| [`examples/link.json`](examples/link.json)                 | A `phrase` layout and `inText`: a link that wraps with its paragraph |
+| [`examples/link.json`](examples/link.json)                 | A `phrase` layout with `block: false`: a link that wraps with its paragraph |
 | [`examples/product-card.json`](examples/product-card.json) | Every concept: images, an empty box, text limits, overlays, a grid, lists, own states, slot config |
 
 ## Repository

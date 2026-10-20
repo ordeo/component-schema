@@ -58,22 +58,6 @@
           "$ref": "#/$defs/placement",
           "description": "Where this part is drawn inside whatever holds it, wherever it is placed. A slot's own `placement` overrides it. Omitted, the part is in the flow."
         },
-        "inText": {
-          "description": "Whether the part sits in the line when it is placed in running text, such as a link or a badge in a sentence. `false`: it breaks the text and stands on lines of its own, as a box. A `phrase` holder puts every part in its line whatever this says, and in a box every part is a box. In the line, a part with `text` content or a `phrase` layout continues the text and wraps with it, and any other part sits in the line as one piece and moves with it. It may follow the variants through conditions, such as a link that stands on its own.",
-          "oneOf": [
-            {
-              "$ref": "#/$defs/flag"
-            },
-            {
-              "$ref": "#/$defs/conditions",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/$defs/flag"
-              }
-            }
-          ],
-          "default": false
-        },
         "layout": {
           "$ref": "#/$defs/layout"
         }
@@ -330,6 +314,9 @@
         "type": {
           "const": "stack"
         },
+        "block": {
+          "$ref": "#/$defs/block"
+        },
         "direction": {
           "description": "Main axis of the layout.",
           "oneOf": [
@@ -402,6 +389,9 @@
         "type": {
           "const": "phrase"
         },
+        "block": {
+          "$ref": "#/$defs/block"
+        },
         "align": {
           "description": "Where a piece that is not text sits against the line. `baseline`: on the text's baseline, like a letter. `center`: centred on the line.",
           "oneOf": [
@@ -427,6 +417,9 @@
       "properties": {
         "type": {
           "const": "grid"
+        },
+        "block": {
+          "$ref": "#/$defs/block"
         },
         "columns": {
           "description": "How many columns of equal width each row has.",
@@ -705,6 +698,22 @@
     "phrase-align": {
       "type": "string",
       "enum": ["baseline", "center"]
+    },
+    "block": {
+      "description": "Whether the part is a box of its own when it is placed in running text, such as a card, or sits in the line, such as a link or a badge in a sentence. `true`: it stands on lines of its own and breaks the text around it. `false`: a `stack` or `grid` sits in the line as one piece and moves with it (`inline-flex`, `inline-grid`); a `phrase` continues the text around it and wraps with it (`inline`). In a box, every part is a box. A part without a layout is in the line by its nature: text continues the run, anything else is one piece. It may follow the variants through conditions, such as a link that stands on its own.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/flag"
+        },
+        {
+          "$ref": "#/$defs/conditions",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/flag"
+          }
+        }
+      ],
+      "default": true
     },
     "flag": {
       "type": "boolean"

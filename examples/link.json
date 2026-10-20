@@ -5,7 +5,6 @@
       "name": "Link",
       "description": "Takes the reader somewhere else. It sits in running text and is set like the words around it, so a long label wraps across lines with its paragraph and its icon stays with the last word. `standalone` takes it out of the text, as a line of its own under a teaser; its label and icon still wrap the same way inside it.",
       "tokens": ["component.link.base"],
-      "inText": { "standalone=false": true, "standalone=true": false },
       "variants": {
         "emphasis": ["high", "low"],
         "standalone": [false, true]
@@ -27,7 +26,8 @@
       },
       "layout": {
         "type": "phrase",
-        "align": "center"
+        "align": "center",
+        "block": { "standalone=false": false, "standalone=true": true }
       }
     },
     {
