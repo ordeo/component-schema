@@ -28,7 +28,7 @@
       "properties": {
         "name": {
           "$ref": "#/$defs/component-name",
-          "description": "Unique name of this unit in PascalCase. Parts are prefixed with the name of the unit that contains them, e.g. `ButtonIcon` inside `Button`."
+          "description": "Unique name of this unit in PascalCase; slots and other files refer to it by this name. By convention a part is prefixed with the name of the unit that holds it, e.g. `ButtonIcon` inside `Button`."
         },
         "content": {
           "$ref": "#/$defs/content"
@@ -59,7 +59,7 @@
           "description": "Where this unit is drawn inside whatever holds it, wherever it is placed. A slot's own `placement` overrides it. Omitted, the unit is in the flow."
         },
         "inText": {
-          "description": "Whether the component can also sit in running text, such as a link or a badge in a sentence. In a box it stays a box; in text, a unit with a `flow` or `grid` layout sits in the line as one piece and moves with it, and a unit with a `phrase` layout or `text` content continues the text and wraps with it. It may follow the variants through conditions, such as a link that stands on its own. For the root: a part in a `phrase` is in text by sitting there.",
+          "description": "Whether the unit sits in the line when it is placed in running text, such as a link or a badge in a sentence. `false`: it breaks the text and stands on lines of its own, as a box. A `phrase` holder puts every part in its line whatever this says, and in a box every unit is a box. In the line, a unit with `text` content or a `phrase` layout continues the text and wraps with it, and any other unit sits in the line as one piece and moves with it. It may follow the variants through conditions, such as a link that stands on its own.",
           "oneOf": [
             {
               "$ref": "#/$defs/flag"
@@ -79,26 +79,60 @@
         }
       },
       "additionalProperties": false,
-      "if": {
-        "required": ["content"],
-        "properties": {
-          "content": {
-            "type": "object",
-            "required": ["type"],
+      "allOf": [
+        {
+          "if": {
+            "required": ["content"],
             "properties": {
-              "type": {
-                "const": "parts"
+              "content": {
+                "type": "object",
+                "required": ["type"],
+                "properties": {
+                  "type": {
+                    "const": "parts"
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "layout": false
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["layout"],
+            "properties": {
+              "layout": {
+                "type": "object",
+                "required": ["type"],
+                "properties": {
+                  "type": {
+                    "enum": ["grid", "phrase"]
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "content": {
+                "properties": {
+                  "slots": {
+                    "additionalProperties": {
+                      "properties": {
+                        "sizing": false
+                      }
+                    }
+                  }
+                }
               }
             }
           }
         }
-      },
-      "then": true,
-      "else": {
-        "properties": {
-          "layout": false
-        }
-      }
+      ]
     },
     "component-name": {
       "type": "string",
@@ -341,14 +375,14 @@
     },
     "phrase-layout": {
       "type": "object",
-      "description": "Sets the parts as one run of text, in slot order, the way a sentence is set: text breaks between words and wraps onto further lines, and an illustration sits in the line like a letter and wraps with it. An illustration never starts or ends a line on its own; it keeps to the word beside it, so a link's icon stays with its last word. Holds only parts whose content is `text`, `illustration` or `none`; `sizing` and `multiple` do not apply to its slots. The space beside an illustration comes from tokens.",
+      "description": "Sets the parts as one run of text, in slot order, the way a sentence is set. A `text` part continues the run: it breaks between words and wraps onto further lines. Any other part sits in the line as one piece, like a letter, and wraps with it. A slot that holds several parts adds them to the run one after another. The space beside a piece comes from tokens.",
       "required": ["type", "align"],
       "properties": {
         "type": {
           "const": "phrase"
         },
         "align": {
-          "description": "Where an illustration sits against the line. `baseline`: on the text's baseline, like a letter. `center`: centred on the line.",
+          "description": "Where a piece that is not text sits against the line. `baseline`: on the text's baseline, like a letter. `center`: centred on the line.",
           "oneOf": [
             {
               "$ref": "#/$defs/phrase-align"
@@ -463,7 +497,7 @@
           "description": "Where the part in this slot is drawn, overriding the part's own `placement`."
         },
         "sizing": {
-          "description": "How the part in this slot is sized along its holder's `flow` direction. `hug`: as big as its content. `fill`: takes the space its siblings leave. Only for parts in the flow.",
+          "description": "How the part in this slot is sized along its holder's `flow` direction while it is in the flow. `hug`: as big as its content. `fill`: takes the space its siblings leave. While it is an overlay, its `inline` and `block` size it instead. A `grid` or `phrase` holder sizes its parts itself, so its slots have no `sizing`.",
           "oneOf": [
             {
               "$ref": "#/$defs/slot-sizing"
@@ -617,7 +651,7 @@
     },
     "conditions": {
       "type": "object",
-      "description": "A value that follows the variants: each key is a condition, each value what the key takes when it holds. A condition is `axis=value`; `|` allows any of several values (`size=sm|lg`) and `,` joins axes that must all hold (`orientation=horizontal,align=start`). The axes are the unit's own `variants`, and in a slot's `config` its holder's. Every combination of the axes the conditions name is matched by exactly one of them: there is no default and no order.",
+      "description": "A value that follows the variants: each key is a condition, each value what the key takes when it holds. A condition is `axis=value`; `|` allows any of several values (`size=sm|lg`) and `,` joins axes that must all hold (`orientation=horizontal,align=start`). The axes are the `variants` of the unit the value is written in: a slot belongs to its holder, so its `placement`, `sizing` and `config` follow the holder's. Every combination of the axes the conditions name is matched by exactly one of them: there is no default and no order.",
       "minProperties": 1,
       "propertyNames": {
         "pattern": "^[a-z][a-z0-9-]*=[a-z0-9][a-z0-9-]*(\\|[a-z0-9][a-z0-9-]*)*(,[a-z][a-z0-9-]*=[a-z0-9][a-z0-9-]*(\\|[a-z0-9][a-z0-9-]*)*)*$"

@@ -27,7 +27,7 @@ A file holds one component. `components` lists its parts, the root first. Every 
 
 | Key           | Meaning                                                                                  |
 |---------------|------------------------------------------------------------------------------------------|
-| `name`        | PascalCase, prefixed with the part that holds it: `ButtonLabel` inside `Button`.         |
+| `name`        | Unique, PascalCase; by convention prefixed with its holder: `ButtonLabel` in `Button`.   |
 | `tokens`      | The token paths that style the part, e.g. `component.button.label.base`.                 |
 | `content`     | What the part shows. See [Content](#content).                                            |
 | `variants`    | The axes the consumer picks. See [Variants and states](#variants-and-states).            |
@@ -69,7 +69,7 @@ optional slot gets a switch named `show<Slot>` in code.
 | `required`    | Whether the consumer must fill it.                                                             |
 | `for`         | What fills it. See below.                                                                      |
 | `multiple`    | `true` for a list of parts, such as the tabs of a tab list. Default `false`.                   |
-| `sizing`      | `hug` (default, as big as its content) or `fill` (takes the space its siblings leave).         |
+| `sizing`      | `hug` (default, as big as its content) or `fill` (takes the space its siblings leave). Not in a `grid` or `phrase`. |
 | `placement`   | Overrides the part's own placement.                                                            |
 | `state`       | `linked` (default) or `own`. See [Interaction states](#interaction-states).                    |
 | `config`      | The variants the held part gets from its holder. See [Configuring a held part](#configuring-a-held-part). |
@@ -200,37 +200,37 @@ A placement can follow the variants as a whole; see [Values that follow variants
   lines when they do not fit.
 - `grid`: rows of `columns` equal columns, filled in slot order. `justify` and `align` place each
   part in its cell (`start`, `center`, `end`, `stretch`, default `stretch`).
-- `phrase`: the parts as one run of text, in slot order, the way a sentence is set. Text breaks
-  between words and wraps; an illustration sits in the line like a letter and wraps with it.
-  `align` places it against the line: `baseline` (on the baseline) or `center` (centred on the
-  line).
+- `phrase`: the parts as one run of text, in slot order, the way a sentence is set. A `text` part
+  continues the run and wraps between words; any other part sits in the line as one piece, like a
+  letter, and wraps with it. `align` places those pieces against the line: `baseline` (on the
+  baseline) or `center` (centred on the line).
 
-An illustration in a `phrase` never stands alone at the start or end of a line: it keeps to the word
-beside it. That is what makes a link's icon wrap with its last word instead of sitting beside the
-whole label, as it would in a `flow`. How a platform keeps the two together (a word joiner, a span
-that does not break) is up to the generator.
+A `multiple` slot adds its parts to the run one after another. Overlays work as anywhere: they are
+drawn over the holder's box.
 
-A `phrase` holds only `text`, `illustration` and `none` parts, and `sizing` and `multiple` do not
-apply to its slots. Overlays still work: they are drawn over the holder's box.
+A `grid` or a `phrase` sizes its parts itself, so its slots take no `sizing`; the schema rejects it.
+In a `flow`, `sizing` applies while a part is in the flow; an overlay is sized by its `inline` and
+`block`.
 
 Every field but `type` can follow the variants.
 
 ## In text
 
-`"inText": true` says a component can also sit in running text, such as a link in a paragraph or a
-badge in a sentence. In a box it still behaves as a box; in text, its layout decides how it sits:
+`"inText": true` says a component sits in the line when it is placed in running text, such as a link
+in a paragraph or a badge in a sentence. In a box it still behaves as a box; in the line, its layout
+decides how it sits:
 
-| Layout or content   | In text                                 | Like (CSS)                   | Example |
-|---------------------|-----------------------------------------|------------------------------|---------|
-| `flow` or `grid`    | One piece in the line, moves as a whole | `inline-flex`, `inline-grid` | Badge   |
-| `phrase`, or `text` | Continues the text and wraps with it    | `inline`                     | Link    |
+| Layout or content                                               | In text                                 | Like (CSS)                                   | Example     |
+|-----------------------------------------------------------------|-----------------------------------------|----------------------------------------------|-------------|
+| `text` content or a `phrase` layout                             | Continues the text and wraps with it    | `inline`                                     | Link        |
+| Anything else (`flow`, `grid`, `illustration`, `image`, `none`) | One piece in the line, moves as a whole | `inline-flex`, `inline-grid`, `inline-block` | Badge, icon |
 
 ```json
 { "name": "Link", "inText": true, "layout": { "type": "phrase", "align": "center" }, … }
 ```
 
-It is set on the root. A part inside a `phrase` is in text by sitting there and needs no
-`inText`. Default `false`.
+With `false` (the default), a unit placed in text breaks it and stands on lines of its own, as a box.
+A `phrase` holder puts every part in its line, whatever its `inText` says.
 
 It can follow the variants. A link that can also stand on its own, as a line of its own under a
 teaser, is in text only when it does not:
@@ -274,7 +274,8 @@ where they matter:
 }
 ```
 
-The axes are the part's own `variants`; in a slot's `config`, its holder's.
+The axes are the `variants` of the part the value is written in. A slot belongs to its holder, so
+its `placement`, `sizing` and `config` follow the holder's.
 
 | Takes conditions                                          | Fixed                                                  |
 |-----------------------------------------------------------|--------------------------------------------------------|
