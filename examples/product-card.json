@@ -29,7 +29,7 @@
         }
       },
       "layout": {
-        "type": "flow",
+        "type": "stack",
         "direction": "column",
         "justify": "start",
         "align": "stretch"
@@ -76,14 +76,14 @@
               "inline": "end",
               "block": "end"
             },
-            "state": "own",
+            "interaction": "own",
             "config": ["size"],
             "description": "Saves the product for later without opening it. It takes its own input, so pressing it does not press the card."
           }
         }
       },
       "layout": {
-        "type": "flow",
+        "type": "stack",
         "direction": "column",
         "justify": "start",
         "align": "stretch"
@@ -140,7 +140,7 @@
         }
       },
       "layout": {
-        "type": "flow",
+        "type": "stack",
         "direction": "column",
         "justify": "start",
         "align": "stretch"
@@ -157,7 +157,7 @@
     },
     {
       "name": "ProductCardBodyTitle",
-      "description": "The product's name, cut after two lines.",
+      "description": "The product's name, cut after two lines on a small card and three on a medium one.",
       "tokens": ["component.product-card.body.title.base"],
       "variants": {
         "size": ["sm", "md"]
@@ -165,7 +165,7 @@
       "states": ["enabled", "hovered", "disabled"],
       "content": {
         "type": "text",
-        "maxLines": 2
+        "maxLines": { "size=sm": 2, "size=md": 3 }
       }
     },
     {
@@ -192,15 +192,15 @@
             "required": true,
             "for": "ProductCardBodySwatchesSwatch",
             "multiple": true,
-            "state": "own"
+            "interaction": "own"
           }
         }
       },
       "layout": {
         "type": "grid",
         "columns": 6,
-        "justify": "center",
-        "align": "center"
+        "justifyItems": "center",
+        "alignItems": "center"
       }
     },
     {
@@ -221,7 +221,7 @@
         }
       },
       "layout": {
-        "type": "flow",
+        "type": "stack",
         "direction": "row",
         "justify": "center",
         "align": "center"
@@ -251,7 +251,7 @@
             "required": true,
             "for": ["Button", "*"],
             "multiple": true,
-            "state": "own",
+            "interaction": "own",
             "config": {
               "inherit": ["size"],
               "emphasis": "low",
@@ -261,7 +261,7 @@
         }
       },
       "layout": {
-        "type": "flow",
+        "type": "stack",
         "direction": "row",
         "justify": "start",
         "align": "center",

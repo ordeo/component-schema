@@ -47,7 +47,7 @@ there is nothing else to say.
 | Type           | Shows                                    | Options                                                        |
 |----------------|------------------------------------------|----------------------------------------------------------------|
 | `none`         | Only its own box, drawn by its tokens    | None. A divider, a track, a skeleton bar, a scrim              |
-| `text`         | A run of text the consumer supplies      | `maxLines` (cut with an ellipsis), `wrap: false` (one line)    |
+| `text`         | A run of text the consumer supplies      | `maxLines` (cut with an ellipsis), `wrap: false` (one line, whatever `maxLines` says) |
 | `illustration` | An icon, a spinner, a drawn mark         | `name`: the component it draws, e.g. `Check`. Without one, the consumer picks it, and a preview shows a placeholder |
 | `image`        | A picture the consumer supplies          | `fit`: `cover` (default, cropped) or `contain` (shown whole)   |
 | `parts`        | Other parts, through its `slots`         | `slots` (required, so `parts` has no shorthand)                |
@@ -69,9 +69,9 @@ optional slot gets a switch named `show<Slot>` in code.
 | `required`    | Whether the consumer must fill it.                                                             |
 | `for`         | What fills it. See below.                                                                      |
 | `multiple`    | `true` for a list of parts, such as the tabs of a tab list. Default `false`.                   |
-| `sizing`      | `hug` (default, as big as its content) or `fill` (takes the space its siblings leave). Not in a `grid` or `phrase`. |
+| `sizing`      | `hug` (default) or `fill`: in a `stack` along its direction, in a `grid` over its cell. Not in a `phrase`. |
 | `placement`   | Overrides the part's own placement.                                                            |
-| `state`       | `linked` (default) or `own`. See [Interaction states](#interaction-states).                    |
+| `interaction` | `inherit` (default) or `own`. See [Interaction states](#interaction-states).                   |
 | `config`      | The variants the held part gets from its holder. See [Configuring a held part](#configuring-a-held-part). |
 | `description` | What the place is for, in prose, for whoever fills it: what belongs there, when to leave it empty. |
 
@@ -127,14 +127,14 @@ interaction has no `states`.
 ### Interaction states
 
 A part shows its holder's interaction states. When a card is hovered, its title shows hover too.
-A part that takes input itself sits in a slot with `"state": "own"`: each tab of a tab list, each
+A part that takes input itself sits in a slot with `"interaction": "own"`: each tab of a tab list, each
 swatch of a colour picker, a button inside a card. Its own parts then follow it.
 
 ```json
-"swatch": { "required": true, "for": "ProductCardSwatch", "multiple": true, "state": "own" }
+"swatch": { "required": true, "for": "ProductCardSwatch", "multiple": true, "interaction": "own" }
 ```
 
-The root and the parts in `own` slots are the units that take input.
+The root and the parts in `own` slots are the parts that take input.
 
 ### Configuring a held part
 
@@ -189,17 +189,17 @@ A placement can follow the variants as a whole; see [Values that follow variants
 `layout` says how a `parts` part arranges its slots. Gaps come from tokens.
 
 ```json
-"layout": { "type": "flow", "direction": "row", "justify": "start", "align": "center", "wrap": true }
-"layout": { "type": "grid", "columns": 6, "justify": "center", "align": "center" }
+"layout": { "type": "stack", "direction": "row", "justify": "start", "align": "center", "wrap": true }
+"layout": { "type": "grid", "columns": 6, "justifyItems": "center", "alignItems": "center" }
 "layout": { "type": "phrase", "align": "center" }
 ```
 
-- `flow`: the parts in one line along `direction` (`row` or `column`). `justify` distributes them
+- `stack`: the parts in one line along `direction` (`row` or `column`). `justify` distributes them
   along it (`start`, `center`, `end`, `space-between`, `space-around`, `space-evenly`), `align`
   places them across it (`start`, `center`, `end`, `stretch`). `wrap: true` moves them onto further
   lines when they do not fit.
-- `grid`: rows of `columns` equal columns, filled in slot order. `justify` and `align` place each
-  part in its cell (`start`, `center`, `end`, `stretch`, default `stretch`).
+- `grid`: rows of `columns` equal columns, filled in slot order. `justifyItems` and `alignItems`
+  place each part in its cell (`start`, `center`, `end`, `stretch`, default `stretch`).
 - `phrase`: the parts as one run of text, in slot order, the way a sentence is set. A `text` part
   continues the run and wraps between words; any other part sits in the line as one piece, like a
   letter, and wraps with it. `align` places those pieces against the line: `baseline` (on the
@@ -208,9 +208,11 @@ A placement can follow the variants as a whole; see [Values that follow variants
 A `multiple` slot adds its parts to the run one after another. Overlays work as anywhere: they are
 drawn over the holder's box.
 
-A `grid` or a `phrase` sizes its parts itself, so its slots take no `sizing`; the schema rejects it.
-In a `flow`, `sizing` applies while a part is in the flow; an overlay is sized by its `inline` and
-`block`.
+`sizing` applies while a part is in the flow. In a `stack`, `fill` takes the space the siblings
+leave along `direction`. In a `grid`, `fill` stretches the part over its cell, whatever
+`justifyItems` and `alignItems` say; `hug` leaves it to them. An overlay is sized by its `inline` and
+`block`. A `phrase` sets its parts like letters, so its slots take no `sizing`; the schema rejects
+it.
 
 Every field but `type` can follow the variants.
 
@@ -223,13 +225,13 @@ decides how it sits:
 | Layout or content                                               | In text                                 | Like (CSS)                                   | Example     |
 |-----------------------------------------------------------------|-----------------------------------------|----------------------------------------------|-------------|
 | `text` content or a `phrase` layout                             | Continues the text and wraps with it    | `inline`                                     | Link        |
-| Anything else (`flow`, `grid`, `illustration`, `image`, `none`) | One piece in the line, moves as a whole | `inline-flex`, `inline-grid`, `inline-block` | Badge, icon |
+| Anything else (`stack`, `grid`, `illustration`, `image`, `none`) | One piece in the line, moves as a whole | `inline-flex`, `inline-grid`, `inline-block` | Badge, icon |
 
 ```json
 { "name": "Link", "inText": true, "layout": { "type": "phrase", "align": "center" }, … }
 ```
 
-With `false` (the default), a unit placed in text breaks it and stands on lines of its own, as a box.
+With `false` (the default), a part placed in text breaks it and stands on lines of its own, as a box.
 A `phrase` holder puts every part in its line, whatever its `inText` says.
 
 It can follow the variants. A link that can also stand on its own, as a line of its own under a
@@ -279,10 +281,11 @@ its `placement`, `sizing` and `config` follow the holder's.
 
 | Takes conditions                                          | Fixed                                                  |
 |-----------------------------------------------------------|--------------------------------------------------------|
-| Every `layout` field but `type`                           | `layout.type`, `content`, `tokens`                     |
-| `placement`, on the part and on the slot (as a whole)     | Slot `for`, `required`, `multiple`, `state`            |
+| Every `layout` field but `type`                           | `layout.type`, the `content` type, `tokens`            |
+| `placement`, on the part and on the slot (as a whole)     | Slot `for`, `required`, `multiple`, `interaction`      |
 | Slot `sizing`                                             |                                                        |
 | `inText`                                                  |                                                        |
+| Text `maxLines` and `wrap`                                |                                                        |
 | Each axis in a slot `config`                              |                                                        |
 
 The schema checks each condition's spelling and each value. That the axes and values exist and

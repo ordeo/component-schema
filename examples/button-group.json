@@ -17,7 +17,7 @@
             "required": true,
             "for": ["Button", "*"],
             "multiple": true,
-            "state": "own",
+            "interaction": "own",
             "config": {
               "inherit": ["size"],
               "emphasis": { "orientation=horizontal": "medium", "orientation=vertical": "low" }
@@ -26,7 +26,7 @@
           "more": {
             "required": false,
             "for": "IconButton",
-            "state": "own",
+            "interaction": "own",
             "config": ["size"],
             "placement": {
               "orientation=horizontal": "flow",
@@ -38,7 +38,7 @@
         }
       },
       "layout": {
-        "type": "flow",
+        "type": "stack",
         "direction": { "orientation=horizontal": "row", "orientation=vertical": "column" },
         "justify": {
           "orientation=horizontal,align=start": "start",

@@ -12,30 +12,30 @@
     },
     "components": {
       "type": "array",
-      "description": "Every renderable unit of this component. The first entry is the root; the rest are the parts it (or another part) references through slots. Each entry becomes one component in the generated code.",
+      "description": "Every renderable part of this component. The first entry is the root; the rest are the parts it (or another part) references through slots. Each entry becomes one component in the generated code.",
       "minItems": 1,
       "items": {
-        "$ref": "#/$defs/component"
+        "$ref": "#/$defs/part"
       }
     }
   },
   "additionalProperties": false,
   "$defs": {
-    "component": {
+    "part": {
       "type": "object",
-      "description": "One renderable unit: the root component or one of its parts.",
+      "description": "One renderable part: the root or one of the parts it holds.",
       "required": ["name", "content", "tokens"],
       "properties": {
         "name": {
           "$ref": "#/$defs/component-name",
-          "description": "Unique name of this unit in PascalCase; slots and other files refer to it by this name. By convention a part is prefixed with the name of the unit that holds it, e.g. `ButtonIcon` inside `Button`."
+          "description": "Unique name of this part in PascalCase; slots and other files refer to it by this name. By convention a part is prefixed with the name of the part that holds it, e.g. `ButtonIcon` inside `Button`."
         },
         "content": {
           "$ref": "#/$defs/content"
         },
         "tokens": {
           "type": "array",
-          "description": "Token paths (dot separated, as in the token files) whose styles apply to this unit, e.g. `component.button.base`.",
+          "description": "Token paths (dot separated, as in the token files) whose styles apply to this part, e.g. `component.button.base`.",
           "minItems": 1,
           "uniqueItems": true,
           "items": {
@@ -50,16 +50,16 @@
         },
         "description": {
           "type": "string",
-          "description": "What this unit is for, in prose, for whoever meets it without the file: why it exists, what it is measured against, and the decisions a reader would otherwise have to reconstruct from the tokens. It is the text a design tool shows beside the component and the comment a generator can carry into code, so it is written for a human and never restates the keys around it.",
+          "description": "What this part is for, in prose, for whoever meets it without the file: why it exists, what it is measured against, and the decisions a reader would otherwise have to reconstruct from the tokens. It is the text a design tool shows beside the component and the comment a generator can carry into code, so it is written for a human and never restates the keys around it.",
           "minLength": 1,
           "maxLength": 4000
         },
         "placement": {
           "$ref": "#/$defs/placement",
-          "description": "Where this unit is drawn inside whatever holds it, wherever it is placed. A slot's own `placement` overrides it. Omitted, the unit is in the flow."
+          "description": "Where this part is drawn inside whatever holds it, wherever it is placed. A slot's own `placement` overrides it. Omitted, the part is in the flow."
         },
         "inText": {
-          "description": "Whether the unit sits in the line when it is placed in running text, such as a link or a badge in a sentence. `false`: it breaks the text and stands on lines of its own, as a box. A `phrase` holder puts every part in its line whatever this says, and in a box every unit is a box. In the line, a unit with `text` content or a `phrase` layout continues the text and wraps with it, and any other unit sits in the line as one piece and moves with it. It may follow the variants through conditions, such as a link that stands on its own.",
+          "description": "Whether the part sits in the line when it is placed in running text, such as a link or a badge in a sentence. `false`: it breaks the text and stands on lines of its own, as a box. A `phrase` holder puts every part in its line whatever this says, and in a box every part is a box. In the line, a part with `text` content or a `phrase` layout continues the text and wraps with it, and any other part sits in the line as one piece and moves with it. It may follow the variants through conditions, such as a link that stands on its own.",
           "oneOf": [
             {
               "$ref": "#/$defs/flag"
@@ -110,7 +110,7 @@
                 "required": ["type"],
                 "properties": {
                   "type": {
-                    "enum": ["grid", "phrase"]
+                    "const": "phrase"
                   }
                 }
               }
@@ -143,7 +143,7 @@
       "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$"
     },
     "content": {
-      "description": "What this unit renders. `none`: nothing but its own box, styled by its tokens, such as a divider, a track or a scrim. `text`: a run of text. `illustration`: a non-text visual such as an icon or a spinner. `image`: a picture the consumer supplies, such as a photo. `parts`: a container for other units, filled through `slots`. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say; `parts` always has slots and so has no shorthand.",
+      "description": "What this part renders. `none`: nothing but its own box, styled by its tokens, such as a divider, a track or a scrim. `text`: a run of text. `illustration`: a non-text visual such as an icon or a spinner. `image`: a picture the consumer supplies, such as a photo. `parts`: a container for other parts, filled through `slots`. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say; `parts` always has slots and so has no shorthand.",
       "oneOf": [
         {
           "type": "string",
@@ -168,7 +168,7 @@
     },
     "none-content": {
       "type": "object",
-      "description": "Nothing inside the unit: what shows is its own box, drawn by its tokens (fill, border, radius, size).",
+      "description": "Nothing inside the part: what shows is its own box, drawn by its tokens (fill, border, radius, size).",
       "required": ["type"],
       "properties": {
         "type": {
@@ -186,14 +186,35 @@
           "const": "text"
         },
         "wrap": {
-          "type": "boolean",
-          "description": "Whether the text breaks onto further lines when it does not fit. `false` keeps it on one line and ends it with an ellipsis.",
+          "description": "Whether the text breaks onto further lines when it does not fit. `false` keeps it on one line and ends it with an ellipsis, whatever `maxLines` says.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/flag"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/flag"
+              }
+            }
+          ],
           "default": true
         },
         "maxLines": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "The most lines the text takes; the last one ends with an ellipsis. Omitted, the text takes as many lines as it needs. Only for text that wraps."
+          "description": "The most lines the text takes while it wraps; the last one ends with an ellipsis. Omitted, the text takes as many lines as it needs.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/line-count"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/line-count"
+              }
+            }
+          ]
         }
       },
       "additionalProperties": false,
@@ -216,14 +237,14 @@
         },
         "name": {
           "$ref": "#/$defs/component-name",
-          "description": "The component this unit draws, e.g. `Check` or `Spinner`; icons are components too. Omitted, the consumer picks what is drawn, and a preview shows a placeholder."
+          "description": "The component this part draws, e.g. `Check` or `Spinner`; icons are components too. Omitted, the consumer picks what is drawn, and a preview shows a placeholder."
         }
       },
       "additionalProperties": false
     },
     "parts-content": {
       "type": "object",
-      "description": "A container for other units, filled through its slots.",
+      "description": "A container for other parts, filled through its slots.",
       "required": ["type", "slots"],
       "properties": {
         "type": {
@@ -236,7 +257,7 @@
       "additionalProperties": false
     },
     "placement": {
-      "description": "Where a unit is drawn: a placement, or conditions that pick one by variant.",
+      "description": "Where a part is drawn: a placement, or conditions that pick one by variant.",
       "oneOf": [
         {
           "$ref": "#/$defs/placement-value"
@@ -251,7 +272,7 @@
       ]
     },
     "placement-value": {
-      "description": "Where a unit is drawn. `flow`: one of the parts its holder's `layout` arranges, sized and spaced with its siblings. `overlay`: taken out of the flow and drawn over the holder's box, where it takes no space and no gap; `inline` and `block` say where on the box it sits, its offsets come from tokens. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say.",
+      "description": "Where a part is drawn. `flow`: one of the parts its holder's `layout` arranges, sized and spaced with its siblings. `overlay`: taken out of the flow and drawn over the holder's box, where it takes no space and no gap; `inline` and `block` say where on the box it sits, its offsets come from tokens. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say.",
       "oneOf": [
         {
           "type": "string",
@@ -288,10 +309,10 @@
       ]
     },
     "layout": {
-      "description": "How this unit arranges the parts in its slots. Only for units whose content is `parts`; omit it when there is nothing to arrange. Gaps come from tokens. Every field but `type` may follow the variants through conditions.",
+      "description": "How this part arranges the parts in its slots. Only for parts whose content is `parts`; omit it when there is nothing to arrange. Gaps come from tokens. Every field but `type` may follow the variants through conditions.",
       "oneOf": [
         {
-          "$ref": "#/$defs/flow-layout"
+          "$ref": "#/$defs/stack-layout"
         },
         {
           "$ref": "#/$defs/grid-layout"
@@ -301,25 +322,25 @@
         }
       ]
     },
-    "flow-layout": {
+    "stack-layout": {
       "type": "object",
       "description": "Places the parts in a single line along `direction`.",
       "required": ["type", "direction", "justify", "align"],
       "properties": {
         "type": {
-          "const": "flow"
+          "const": "stack"
         },
         "direction": {
           "description": "Main axis of the layout.",
           "oneOf": [
             {
-              "$ref": "#/$defs/flow-direction"
+              "$ref": "#/$defs/stack-direction"
             },
             {
               "$ref": "#/$defs/conditions",
               "type": "object",
               "additionalProperties": {
-                "$ref": "#/$defs/flow-direction"
+                "$ref": "#/$defs/stack-direction"
               }
             }
           ]
@@ -328,13 +349,13 @@
           "description": "Distribution of the parts along the main axis.",
           "oneOf": [
             {
-              "$ref": "#/$defs/flow-justify"
+              "$ref": "#/$defs/stack-justify"
             },
             {
               "$ref": "#/$defs/conditions",
               "type": "object",
               "additionalProperties": {
-                "$ref": "#/$defs/flow-justify"
+                "$ref": "#/$defs/stack-justify"
               }
             }
           ]
@@ -422,7 +443,7 @@
             }
           ]
         },
-        "justify": {
+        "justifyItems": {
           "description": "Alignment of each part inside its cell along the row.",
           "oneOf": [
             {
@@ -438,7 +459,7 @@
           ],
           "default": "stretch"
         },
-        "align": {
+        "alignItems": {
           "description": "Alignment of each part inside its cell across the row.",
           "oneOf": [
             {
@@ -477,7 +498,7 @@
           "description": "Whether the consumer must fill this slot."
         },
         "for": {
-          "description": "What fills this slot: the name of a unit in this file or of another component, or a list of them. The first entry is the default. `*` opens the slot to anything: alone, the slot has no default and a preview shows a placeholder; after a name (`[\"ButtonIcon\", \"*\"]`), that unit is the default and anything may replace it.",
+          "description": "What fills this slot: the name of a part in this file or of another component, or a list of them. The first entry is the default. `*` opens the slot to anything: alone, the slot has no default and a preview shows a placeholder; after a name (`[\"ButtonIcon\", \"*\"]`), that part is the default and anything may replace it.",
           "oneOf": [
             {
               "$ref": "#/$defs/slot-target"
@@ -497,7 +518,7 @@
           "description": "Where the part in this slot is drawn, overriding the part's own `placement`."
         },
         "sizing": {
-          "description": "How the part in this slot is sized along its holder's `flow` direction while it is in the flow. `hug`: as big as its content. `fill`: takes the space its siblings leave. While it is an overlay, its `inline` and `block` size it instead. A `grid` or `phrase` holder sizes its parts itself, so its slots have no `sizing`.",
+          "description": "How the part in this slot is sized while it is in the flow. In a `stack`, along its direction: `hug` is as big as its content, `fill` takes the space its siblings leave. In a `grid`: `fill` stretches it over its cell, whatever `justifyItems` and `alignItems` say; `hug` leaves it to them. While it is an overlay, its `inline` and `block` size it instead. A `phrase` sets its parts like letters, so its slots have no `sizing`.",
           "oneOf": [
             {
               "$ref": "#/$defs/slot-sizing"
@@ -520,11 +541,11 @@
         "config": {
           "$ref": "#/$defs/slot-config"
         },
-        "state": {
+        "interaction": {
           "type": "string",
-          "enum": ["linked", "own"],
-          "default": "linked",
-          "description": "Whose interaction states (hovered, pressed, focused, …) the part in this slot shows. `linked`: its holder's, so a card's title shows the card's hover. `own`: its own, because it takes input itself, like each tab of a tab list or a button inside a card; its own parts then link to it. A unit takes input when it is a component's first unit or sits in an `own` slot."
+          "enum": ["inherit", "own"],
+          "default": "inherit",
+          "description": "Whose interaction states (hovered, pressed, focused, …) the part in this slot shows. `inherit`: its holder's, so a card's title shows the card's hover. `own`: its own, because it takes input itself, like each tab of a tab list or a button inside a card; its own parts then inherit from it. A part takes input when it is the root or sits in an `own` slot."
         },
         "description": {
           "type": "string",
@@ -557,7 +578,7 @@
           "type": "string",
           "enum": ["cover", "contain"],
           "default": "cover",
-          "description": "How the picture fills the unit's box. `cover`: fills it and is cropped to it. `contain`: is shown whole, inside it."
+          "description": "How the picture fills the part's box. `cover`: fills it and is cropped to it. `contain`: is shown whole, inside it."
         }
       },
       "additionalProperties": false
@@ -570,7 +591,7 @@
     },
     "variants": {
       "type": "object",
-      "description": "The axes the consumer picks on this unit, such as `size`, `emphasis` or `align`, with the values it has, in the order the axis defines them. Most switch the unit's tokens, but an axis need not. Interaction states are not variants; they are listed in `states`. Omitted, the unit looks the same whatever its holder is set to.",
+      "description": "The axes the consumer picks on this part, such as `size`, `emphasis` or `align`, with the values it has, in the order the axis defines them. Most switch the part's tokens, but an axis need not. Interaction states are not variants; they are listed in `states`. Omitted, the part looks the same whatever its holder is set to.",
       "minProperties": 1,
       "propertyNames": {
         "pattern": "^[a-z][a-z0-9-]*$"
@@ -586,7 +607,7 @@
     },
     "states": {
       "type": "array",
-      "description": "The interaction states this unit's tokens style, such as `hovered` or `disabled`. They follow the user's interaction and are not picked like variants.",
+      "description": "The interaction states this part's tokens style, such as `hovered` or `disabled`. They follow the user's interaction and are not picked like variants.",
       "minItems": 1,
       "uniqueItems": true,
       "items": {
@@ -651,17 +672,17 @@
     },
     "conditions": {
       "type": "object",
-      "description": "A value that follows the variants: each key is a condition, each value what the key takes when it holds. A condition is `axis=value`; `|` allows any of several values (`size=sm|lg`) and `,` joins axes that must all hold (`orientation=horizontal,align=start`). The axes are the `variants` of the unit the value is written in: a slot belongs to its holder, so its `placement`, `sizing` and `config` follow the holder's. Every combination of the axes the conditions name is matched by exactly one of them: there is no default and no order.",
+      "description": "A value that follows the variants: each key is a condition, each value what the key takes when it holds. A condition is `axis=value`; `|` allows any of several values (`size=sm|lg`) and `,` joins axes that must all hold (`orientation=horizontal,align=start`). The axes are the `variants` of the part the value is written in: a slot belongs to its holder, so its `placement`, `sizing` and `config` follow the holder's. Every combination of the axes the conditions name is matched by exactly one of them: there is no default and no order.",
       "minProperties": 1,
       "propertyNames": {
         "pattern": "^[a-z][a-z0-9-]*=[a-z0-9][a-z0-9-]*(\\|[a-z0-9][a-z0-9-]*)*(,[a-z][a-z0-9-]*=[a-z0-9][a-z0-9-]*(\\|[a-z0-9][a-z0-9-]*)*)*$"
       }
     },
-    "flow-direction": {
+    "stack-direction": {
       "type": "string",
       "enum": ["row", "column"]
     },
-    "flow-justify": {
+    "stack-justify": {
       "type": "string",
       "enum": ["start", "center", "end", "space-between", "space-around", "space-evenly"]
     },
@@ -670,6 +691,10 @@
       "enum": ["start", "center", "end", "stretch"]
     },
     "column-count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "line-count": {
       "type": "integer",
       "minimum": 1
     },
