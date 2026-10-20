@@ -58,6 +58,22 @@
           "$ref": "#/$defs/placement",
           "description": "Where this unit is drawn inside whatever holds it, wherever it is placed. A slot's own `placement` overrides it. Omitted, the unit is in the flow."
         },
+        "inText": {
+          "description": "Whether the component can also sit in running text, such as a link or a badge in a sentence. In a box it stays a box; in text, a unit with a `flow` or `grid` layout sits in the line as one piece and moves with it, and a unit with a `phrase` layout or `text` content continues the text and wraps with it. It may follow the variants through conditions, such as a link that stands on its own. For the root: a part in a `phrase` is in text by sitting there.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/flag"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/flag"
+              }
+            }
+          ],
+          "default": false
+        },
         "layout": {
           "$ref": "#/$defs/layout"
         }

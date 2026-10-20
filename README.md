@@ -34,6 +34,7 @@ A file holds one component. `components` lists its parts, the root first. Every 
 | `states`      | The interaction states its tokens style.                                                 |
 | `placement`   | Where it is drawn inside its holder. See [Placement](#placement).                        |
 | `layout`      | How it arranges its own parts. See [Layout](#layout).                                     |
+| `inText`      | Whether the component can also sit in running text. See [In text](#in-text).             |
 | `description` | What the part is for, in prose, for a reader who meets it without the file.              |
 
 Only `name`, `tokens` and `content` are required.
@@ -214,6 +215,31 @@ apply to its slots. Overlays still work: they are drawn over the holder's box.
 
 Every field but `type` can follow the variants.
 
+## In text
+
+`"inText": true` says a component can also sit in running text, such as a link in a paragraph or a
+badge in a sentence. In a box it still behaves as a box; in text, its layout decides how it sits:
+
+| Layout or content   | In text                                 | Like (CSS)                   | Example |
+|---------------------|-----------------------------------------|------------------------------|---------|
+| `flow` or `grid`    | One piece in the line, moves as a whole | `inline-flex`, `inline-grid` | Badge   |
+| `phrase`, or `text` | Continues the text and wraps with it    | `inline`                     | Link    |
+
+```json
+{ "name": "Link", "inText": true, "layout": { "type": "phrase", "align": "center" }, … }
+```
+
+It is set on the root. A part inside a `phrase` is in text by sitting there and needs no
+`inText`. Default `false`.
+
+It can follow the variants. A link that can also stand on its own, as a line of its own under a
+teaser, is in text only when it does not:
+
+```json
+"variants": { "standalone": [false, true] },
+"inText": { "standalone=false": true, "standalone=true": false }
+```
+
 ## Values that follow variants
 
 Some values depend on the variants: a stacked group lays out in a column, a small card takes two
@@ -255,6 +281,7 @@ The axes are the part's own `variants`; in a slot's `config`, its holder's.
 | Every `layout` field but `type`                           | `layout.type`, `content`, `tokens`                     |
 | `placement`, on the part and on the slot (as a whole)     | Slot `for`, `required`, `multiple`, `state`            |
 | Slot `sizing`                                             |                                                        |
+| `inText`                                                  |                                                        |
 | Each axis in a slot `config`                              |                                                        |
 
 The schema checks each condition's spelling and each value. That the axes and values exist and
@@ -267,7 +294,7 @@ files.
 |------------------------------------------------------------|---------------------------------------------------------------|
 | [`examples/button.json`](examples/button.json)             | A small component: variants, states, an open slot, an overlay |
 | [`examples/button-group.json`](examples/button-group.json) | Values that follow variants, including a combination of two axes |
-| [`examples/link.json`](examples/link.json)                 | A `phrase` layout: an icon that wraps with the last word      |
+| [`examples/link.json`](examples/link.json)                 | A `phrase` layout and `inText`: a link that wraps with its paragraph |
 | [`examples/product-card.json`](examples/product-card.json) | Every concept: images, an empty box, text limits, overlays, a grid, lists, own states, slot config |
 
 ## Repository

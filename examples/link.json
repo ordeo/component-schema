@@ -3,10 +3,12 @@
   "components": [
     {
       "name": "Link",
-      "description": "Takes the reader somewhere else. It is set like the words around it, so a long label wraps across lines and its icon stays with the last word.",
+      "description": "Takes the reader somewhere else. It sits in running text and is set like the words around it, so a long label wraps across lines with its paragraph and its icon stays with the last word. `standalone` takes it out of the text, as a line of its own under a teaser; its label and icon still wrap the same way inside it.",
       "tokens": ["component.link.base"],
+      "inText": { "standalone=false": true, "standalone=true": false },
       "variants": {
-        "emphasis": ["high", "low"]
+        "emphasis": ["high", "low"],
+        "standalone": [false, true]
       },
       "states": ["enabled", "hovered", "pressed", "focused", "visited"],
       "content": {
