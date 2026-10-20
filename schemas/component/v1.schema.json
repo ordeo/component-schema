@@ -186,6 +186,21 @@
       "additionalProperties": false
     },
     "placement": {
+      "description": "Where a unit is drawn: a placement, or conditions that pick one by variant.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/placement-value"
+        },
+        {
+          "$ref": "#/$defs/conditions",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/placement-value"
+          }
+        }
+      ]
+    },
+    "placement-value": {
       "description": "Where a unit is drawn. `flow`: one of the parts its holder's `layout` arranges, sized and spaced with its siblings. `overlay`: taken out of the flow and drawn over the holder's box, where it takes no space and no gap; `inline` and `block` say where on the box it sits, its offsets come from tokens. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say.",
       "oneOf": [
         {
@@ -223,7 +238,7 @@
       ]
     },
     "layout": {
-      "description": "How this unit arranges the parts in its slots. Only for units whose content is `parts`; omit it when there is nothing to arrange. Gaps come from tokens.",
+      "description": "How this unit arranges the parts in its slots. Only for units whose content is `parts`; omit it when there is nothing to arrange. Gaps come from tokens. Every field but `type` may follow the variants through conditions.",
       "oneOf": [
         {
           "$ref": "#/$defs/flow-layout"
@@ -242,24 +257,65 @@
           "const": "flow"
         },
         "direction": {
-          "type": "string",
           "description": "Main axis of the layout.",
-          "enum": ["row", "column"]
+          "oneOf": [
+            {
+              "$ref": "#/$defs/flow-direction"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/flow-direction"
+              }
+            }
+          ]
         },
         "justify": {
-          "type": "string",
           "description": "Distribution of the parts along the main axis.",
-          "enum": ["start", "center", "end", "space-between", "space-around", "space-evenly"]
+          "oneOf": [
+            {
+              "$ref": "#/$defs/flow-justify"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/flow-justify"
+              }
+            }
+          ]
         },
         "align": {
-          "type": "string",
           "description": "Alignment of the parts on the cross axis.",
-          "enum": ["start", "center", "end", "stretch"]
+          "oneOf": [
+            {
+              "$ref": "#/$defs/item-align"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/item-align"
+              }
+            }
+          ]
         },
         "wrap": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether the parts move onto a further line when they do not fit."
+          "description": "Whether the parts move onto a further line when they do not fit.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/flag"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/flag"
+              }
+            }
+          ],
+          "default": false
         }
       },
       "additionalProperties": false
@@ -273,20 +329,50 @@
           "const": "grid"
         },
         "columns": {
-          "type": "integer",
           "description": "How many columns of equal width each row has.",
-          "minimum": 1
+          "oneOf": [
+            {
+              "$ref": "#/$defs/column-count"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/column-count"
+              }
+            }
+          ]
         },
         "justify": {
-          "type": "string",
           "description": "Alignment of each part inside its cell along the row.",
-          "enum": ["start", "center", "end", "stretch"],
+          "oneOf": [
+            {
+              "$ref": "#/$defs/item-align"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/item-align"
+              }
+            }
+          ],
           "default": "stretch"
         },
         "align": {
-          "type": "string",
           "description": "Alignment of each part inside its cell across the row.",
-          "enum": ["start", "center", "end", "stretch"],
+          "oneOf": [
+            {
+              "$ref": "#/$defs/item-align"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/item-align"
+              }
+            }
+          ],
           "default": "stretch"
         }
       },
@@ -332,10 +418,20 @@
           "description": "Where the part in this slot is drawn, overriding the part's own `placement`."
         },
         "sizing": {
-          "type": "string",
-          "enum": ["hug", "fill"],
-          "default": "hug",
-          "description": "How the part in this slot is sized along its holder's `flow` direction. `hug`: as big as its content. `fill`: takes the space its siblings leave. Only for parts in the flow."
+          "description": "How the part in this slot is sized along its holder's `flow` direction. `hug`: as big as its content. `fill`: takes the space its siblings leave. Only for parts in the flow.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/slot-sizing"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/slot-sizing"
+              }
+            }
+          ],
+          "default": "hug"
         },
         "multiple": {
           "type": "boolean",
@@ -460,34 +556,50 @@
       ]
     },
     "config-value": {
-      "description": "The value one axis of the part gets. A value fixes it, whatever the holder shows. `from` and `map` translate one of the holder's axes: each holder value listed in `map` gives the part's value beside it, and a value not listed passes unchanged.",
+      "description": "The value one axis of the part gets. A value fixes it, whatever the holder shows. Conditions pick it by the holder's variants: `{ \"size=sm\": \"xs\", \"size=md\": \"sm\" }` gives the part `xs` when the holder is `sm`. Every value of the holder's axes is covered; none passes unchanged, which is what `inherit` is for.",
       "oneOf": [
         {
           "$ref": "#/$defs/variant-value"
         },
         {
+          "$ref": "#/$defs/conditions",
           "type": "object",
-          "required": ["from", "map"],
-          "properties": {
-            "from": {
-              "type": "string",
-              "pattern": "^[a-z][a-z0-9-]*$",
-              "description": "The holder's axis that is translated."
-            },
-            "map": {
-              "type": "object",
-              "minProperties": 1,
-              "propertyNames": {
-                "pattern": "^[a-z0-9][a-z0-9-]*$"
-              },
-              "additionalProperties": {
-                "$ref": "#/$defs/variant-value"
-              }
-            }
-          },
-          "additionalProperties": false
+          "additionalProperties": {
+            "$ref": "#/$defs/variant-value"
+          }
         }
       ]
+    },
+    "conditions": {
+      "type": "object",
+      "description": "A value that follows the variants: each key is a condition, each value what the key takes when it holds. A condition is `axis=value`; `|` allows any of several values (`size=sm|lg`) and `,` joins axes that must all hold (`orientation=horizontal,align=start`). The axes are the unit's own `variants`, and in a slot's `config` its holder's. Every combination of the axes the conditions name is matched by exactly one of them: there is no default and no order.",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]*=[a-z0-9][a-z0-9-]*(\\|[a-z0-9][a-z0-9-]*)*(,[a-z][a-z0-9-]*=[a-z0-9][a-z0-9-]*(\\|[a-z0-9][a-z0-9-]*)*)*$"
+      }
+    },
+    "flow-direction": {
+      "type": "string",
+      "enum": ["row", "column"]
+    },
+    "flow-justify": {
+      "type": "string",
+      "enum": ["start", "center", "end", "space-between", "space-around", "space-evenly"]
+    },
+    "item-align": {
+      "type": "string",
+      "enum": ["start", "center", "end", "stretch"]
+    },
+    "column-count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "slot-sizing": {
+      "type": "string",
+      "enum": ["hug", "fill"]
+    },
+    "flag": {
+      "type": "boolean"
     },
     "variant-value": {
       "description": "One value of an axis: a name such as `md`, or `false`/`true` for an axis that is on or off, such as `destructive`.",

@@ -65,7 +65,7 @@
             },
             "config": {
               "emphasis": "high",
-              "size": { "from": "size", "map": { "sm": "xs", "md": "sm" } }
+              "size": { "size=sm": "xs", "size=md": "sm" }
             }
           },
           "favorite": {

@@ -1,0 +1,59 @@
+{
+  "$schema": "../schemas/component/v1.schema.json",
+  "components": [
+    {
+      "name": "ButtonGroup",
+      "description": "Related actions kept together, side by side or stacked. `align` says where the buttons gather: along the row when they sit side by side, across the column when they are stacked.",
+      "tokens": ["component.button-group.base"],
+      "variants": {
+        "orientation": ["horizontal", "vertical"],
+        "align": ["start", "center", "end"],
+        "size": ["sm", "md", "lg"]
+      },
+      "content": {
+        "type": "parts",
+        "slots": {
+          "button": {
+            "required": true,
+            "for": ["Button", "*"],
+            "multiple": true,
+            "state": "own",
+            "config": {
+              "inherit": ["size"],
+              "emphasis": { "orientation=horizontal": "medium", "orientation=vertical": "low" }
+            }
+          },
+          "more": {
+            "required": false,
+            "for": "IconButton",
+            "state": "own",
+            "config": ["size"],
+            "placement": {
+              "orientation=horizontal": "flow",
+              "orientation=vertical,align=start|center": { "type": "overlay", "inline": "end", "block": "start" },
+              "orientation=vertical,align=end": { "type": "overlay", "inline": "start", "block": "start" }
+            },
+            "description": "Holds the actions that do not fit. Stacked, it moves to a top corner so it does not add a row of its own: the end corner, or the start corner when the buttons gather at the end."
+          }
+        }
+      },
+      "layout": {
+        "type": "flow",
+        "direction": { "orientation=horizontal": "row", "orientation=vertical": "column" },
+        "justify": {
+          "orientation=horizontal,align=start": "start",
+          "orientation=horizontal,align=center": "center",
+          "orientation=horizontal,align=end": "end",
+          "orientation=vertical": "start"
+        },
+        "align": {
+          "orientation=horizontal": "center",
+          "orientation=vertical,align=start": "start",
+          "orientation=vertical,align=center": "center",
+          "orientation=vertical,align=end": "end"
+        },
+        "wrap": { "orientation=horizontal": true, "orientation=vertical": false }
+      }
+    }
+  ]
+}

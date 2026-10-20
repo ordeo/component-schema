@@ -144,14 +144,15 @@ holder. Each axis is set in one of three ways:
 "config": {
   "inherit": ["intent"],
   "emphasis": "subtle",
-  "size": { "from": "size", "map": { "sm": "xs", "md": "sm", "lg": "md" } }
+  "size": { "size=sm": "xs", "size=md": "sm", "size=lg": "md" }
 }
 ```
 
 - **Inherited** (`inherit`): the holder's value, unchanged. `"*"` passes every axis the two share.
 - **Fixed**: a value, whatever the holder shows: `"emphasis": "subtle"`, `"destructive": false`.
-- **Mapped** (`from`, `map`): one of the holder's axes, translated. `from` may name another axis
-  (`"size": { "from": "density", … }`). A value not listed in `map` passes unchanged.
+- **By condition**: picked by the holder's variants, see [Values that follow variants](#values-that-follow-variants).
+  The conditions may name any of the holder's axes (`"size": { "density=compact": "sm", … }`).
+  Every holder value is covered; nothing passes unchanged, which is what `inherit` is for.
 
 A list is shorthand for `inherit`:
 
@@ -180,6 +181,8 @@ wherever it is placed, or on a slot, which wins.
 
 Offsets come from tokens.
 
+A placement can follow the variants as a whole; see [Values that follow variants](#values-that-follow-variants).
+
 ## Layout
 
 `layout` says how a `parts` part arranges its slots. Gaps come from tokens.
@@ -196,11 +199,61 @@ Offsets come from tokens.
 - `grid`: rows of `columns` equal columns, filled in slot order. `justify` and `align` place each
   part in its cell (`start`, `center`, `end`, `stretch`, default `stretch`).
 
+Every field but `type` can follow the variants.
+
+## Values that follow variants
+
+Some values depend on the variants: a stacked group lays out in a column, a small card takes two
+columns. Such a value is written as conditions, each giving the value it takes when it holds:
+
+```json
+"direction": { "orientation=horizontal": "row", "orientation=vertical": "column" }
+```
+
+A condition names axes and their values:
+
+```
+orientation=horizontal              one value
+size=sm|lg                          any of these values
+orientation=horizontal,align=start  all of these hold
+size=sm|lg,align=start
+destructive=true                    an axis that is on or off
+```
+
+No spaces, and nothing else: no negation, no `or` across axes, no `else`.
+
+**Exactly one condition holds for every combination** of the axes the conditions name. There is
+no default and no order, so each condition can be read on its own. Combinations are spelled out
+where they matter:
+
+```json
+"justify": {
+  "orientation=horizontal,align=start": "start",
+  "orientation=horizontal,align=center": "center",
+  "orientation=horizontal,align=end": "end",
+  "orientation=vertical": "start"
+}
+```
+
+The axes are the part's own `variants`; in a slot's `config`, its holder's.
+
+| Takes conditions                                          | Fixed                                                  |
+|-----------------------------------------------------------|--------------------------------------------------------|
+| Every `layout` field but `type`                           | `layout.type`, `content`, `tokens`                     |
+| `placement`, on the part and on the slot (as a whole)     | Slot `for`, `required`, `multiple`, `state`            |
+| Slot `sizing`                                             |                                                        |
+| Each axis in a slot `config`                              |                                                        |
+
+The schema checks each condition's spelling and each value. That the axes and values exist and
+that the conditions cover every combination exactly once is left to the tooling that reads the
+files.
+
 ## Examples
 
 | File                                                       | Shows                                                         |
 |------------------------------------------------------------|---------------------------------------------------------------|
 | [`examples/button.json`](examples/button.json)             | A small component: variants, states, an open slot, an overlay |
+| [`examples/button-group.json`](examples/button-group.json) | Values that follow variants, including a combination of two axes |
 | [`examples/product-card.json`](examples/product-card.json) | Every concept: images, an empty box, text limits, overlays, a grid, lists, own states, slot config |
 
 ## Repository
