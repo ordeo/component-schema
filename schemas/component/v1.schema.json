@@ -245,6 +245,9 @@
         },
         {
           "$ref": "#/$defs/grid-layout"
+        },
+        {
+          "$ref": "#/$defs/phrase-layout"
         }
       ]
     },
@@ -316,6 +319,32 @@
             }
           ],
           "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "phrase-layout": {
+      "type": "object",
+      "description": "Sets the parts as one run of text, in slot order, the way a sentence is set: text breaks between words and wraps onto further lines, and an illustration sits in the line like a letter and wraps with it. An illustration never starts or ends a line on its own; it keeps to the word beside it, so a link's icon stays with its last word. Holds only parts whose content is `text`, `illustration` or `none`; `sizing` and `multiple` do not apply to its slots. The space beside an illustration comes from tokens.",
+      "required": ["type", "align"],
+      "properties": {
+        "type": {
+          "const": "phrase"
+        },
+        "align": {
+          "description": "Where an illustration sits against the line. `baseline`: on the text's baseline, like a letter. `center`: centred on the line.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/phrase-align"
+            },
+            {
+              "$ref": "#/$defs/conditions",
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/phrase-align"
+              }
+            }
+          ]
         }
       },
       "additionalProperties": false
@@ -597,6 +626,10 @@
     "slot-sizing": {
       "type": "string",
       "enum": ["hug", "fill"]
+    },
+    "phrase-align": {
+      "type": "string",
+      "enum": ["baseline", "center"]
     },
     "flag": {
       "type": "boolean"

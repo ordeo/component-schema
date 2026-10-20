@@ -1,0 +1,44 @@
+{
+  "$schema": "../schemas/component/v1.schema.json",
+  "components": [
+    {
+      "name": "Link",
+      "description": "Takes the reader somewhere else. It is set like the words around it, so a long label wraps across lines and its icon stays with the last word.",
+      "tokens": ["component.link.base"],
+      "variants": {
+        "emphasis": ["high", "low"]
+      },
+      "states": ["enabled", "hovered", "pressed", "focused", "visited"],
+      "content": {
+        "type": "parts",
+        "slots": {
+          "label": {
+            "required": true,
+            "for": "LinkLabel"
+          },
+          "icon": {
+            "required": false,
+            "for": ["LinkIcon", "*"],
+            "description": "Says where the link goes, such as an arrow or a mark for another site. It follows the label and never ends up alone on a line."
+          }
+        }
+      },
+      "layout": {
+        "type": "phrase",
+        "align": "center"
+      }
+    },
+    {
+      "name": "LinkLabel",
+      "description": "The words that say where the link goes.",
+      "tokens": ["component.link.label"],
+      "content": "text"
+    },
+    {
+      "name": "LinkIcon",
+      "description": "The mark after the label.",
+      "tokens": ["component.link.icon"],
+      "content": "illustration"
+    }
+  ]
+}

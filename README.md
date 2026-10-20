@@ -190,6 +190,7 @@ A placement can follow the variants as a whole; see [Values that follow variants
 ```json
 "layout": { "type": "flow", "direction": "row", "justify": "start", "align": "center", "wrap": true }
 "layout": { "type": "grid", "columns": 6, "justify": "center", "align": "center" }
+"layout": { "type": "phrase", "align": "center" }
 ```
 
 - `flow`: the parts in one line along `direction` (`row` or `column`). `justify` distributes them
@@ -198,6 +199,18 @@ A placement can follow the variants as a whole; see [Values that follow variants
   lines when they do not fit.
 - `grid`: rows of `columns` equal columns, filled in slot order. `justify` and `align` place each
   part in its cell (`start`, `center`, `end`, `stretch`, default `stretch`).
+- `phrase`: the parts as one run of text, in slot order, the way a sentence is set. Text breaks
+  between words and wraps; an illustration sits in the line like a letter and wraps with it.
+  `align` places it against the line: `baseline` (on the baseline) or `center` (centred on the
+  line).
+
+An illustration in a `phrase` never stands alone at the start or end of a line: it keeps to the word
+beside it. That is what makes a link's icon wrap with its last word instead of sitting beside the
+whole label, as it would in a `flow`. How a platform keeps the two together (a word joiner, a span
+that does not break) is up to the generator.
+
+A `phrase` holds only `text`, `illustration` and `none` parts, and `sizing` and `multiple` do not
+apply to its slots. Overlays still work: they are drawn over the holder's box.
 
 Every field but `type` can follow the variants.
 
@@ -254,6 +267,7 @@ files.
 |------------------------------------------------------------|---------------------------------------------------------------|
 | [`examples/button.json`](examples/button.json)             | A small component: variants, states, an open slot, an overlay |
 | [`examples/button-group.json`](examples/button-group.json) | Values that follow variants, including a combination of two axes |
+| [`examples/link.json`](examples/link.json)                 | A `phrase` layout: an icon that wraps with the last word      |
 | [`examples/product-card.json`](examples/product-card.json) | Every concept: images, an empty box, text limits, overlays, a grid, lists, own states, slot config |
 
 ## Repository
