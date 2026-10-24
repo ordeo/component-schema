@@ -65,10 +65,6 @@
           "minLength": 1,
           "maxLength": 4000
         },
-        "placement": {
-          "$ref": "#/$defs/placement",
-          "description": "Where this part is drawn inside whatever holds it, wherever it is placed. A slot's own `placement` overrides it. Omitted, the part is in the flow."
-        },
         "layout": {
           "$ref": "#/$defs/layout"
         },
@@ -581,7 +577,7 @@
         },
         "placement": {
           "$ref": "#/$defs/placement",
-          "description": "Where the part in this slot is drawn, overriding the part's own `placement`."
+          "description": "Where the part in this slot is drawn inside the holder. A part never places itself: where it goes is up to whatever holds it. Omitted, the part is in the flow."
         },
         "sizing": {
           "description": "How the part in this slot is sized while it is in the flow. In a `stack`, along its direction: `hug` is as big as its content, `fill` takes the space its siblings leave. In a `grid`: `fill` stretches it over its cell, whatever `justifyItems` and `alignItems` say; `hug` leaves it to them. While it is an overlay, its `inline` and `block` size it instead. A `phrase` sets its parts like letters, so its slots have no `sizing`.",

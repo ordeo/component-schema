@@ -34,7 +34,6 @@ such as `Actions` or `Data Input`. `components` lists its parts, the root first.
 | `content`     | What the part shows. See [Content](#content).                                            |
 | `variants`    | The axes the consumer picks. See [Variants and states](#variants-and-states).            |
 | `states`      | The interaction states its tokens style.                                                 |
-| `placement`   | Where it is drawn inside its holder. See [Placement](#placement).                        |
 | `layout`      | How it arranges its own parts. See [Layout](#layout).                                     |
 | `features`    | What kind of element it is. `interactive`: a control the user operates, such as a button. |
 | `description` | What the part is for, in prose, for a reader who meets it without the file.              |
@@ -72,7 +71,7 @@ optional slot gets a switch named `show<Slot>` in code.
 | `for`         | What fills it. See below.                                                                      |
 | `multiple`    | `true` for a list of parts, such as the tabs of a tab list. Default `false`.                   |
 | `sizing`      | `hug` (default) or `fill`: in a `stack` along its direction, in a `grid` over its cell. Not in a `phrase`. |
-| `placement`   | Overrides the part's own placement.                                                            |
+| `placement`   | Where the part in it is drawn. See [Placement](#placement).                                    |
 | `interaction` | `inherit` (default) or `own`. See [Interaction states](#interaction-states).                   |
 | `config`      | The variants the held part gets from its holder. See [Configuring a held part](#configuring-a-held-part). |
 | `description` | What the place is for, in prose, for whoever fills it: what belongs there, when to leave it empty. |
@@ -169,8 +168,8 @@ A list is shorthand for `inherit`:
 
 ## Placement
 
-`placement` says where a part is drawn inside its holder. It can sit on the part, which applies
-wherever it is placed, or on a slot, which wins.
+`placement` says where a part is drawn inside its holder. It sits on the slot only: a part never
+places itself, so the same part can sit in the flow in one holder and over the box in another.
 
 - `flow` (default): one of the parts the holder's `layout` arranges.
 - `overlay`: drawn over the holder's box, taking no space. `inline` and `block` say where it sits:
@@ -286,7 +285,7 @@ its `placement`, `sizing` and `config` follow the holder's.
 | Takes conditions                                          | Fixed                                                  |
 |-----------------------------------------------------------|--------------------------------------------------------|
 | Every `layout` field but `type`                           | `layout.type`, the `content` type, `tokens`            |
-| `placement`, on the part and on the slot (as a whole)     | Slot `for`, `required`, `multiple`, `interaction`      |
+| Slot `placement` (as a whole)                             | Slot `for`, `required`, `multiple`, `interaction`      |
 | Slot `sizing`                                             |                                                        |
 | Text `maxLines` and `wrap`                                |                                                        |
 | Each axis in a slot `config`                              |                                                        |

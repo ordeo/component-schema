@@ -54,6 +54,7 @@
           "scrim": {
             "required": false,
             "for": "ProductCardMediaScrim",
+            "placement": "overlay",
             "description": "Turn it on when the badge or the favourite button gets lost on a busy photo."
           },
           "badge": {
@@ -101,10 +102,9 @@
     },
     {
       "name": "ProductCardMediaScrim",
-      "description": "A shade over the whole photo, so the badge and the favourite button stay legible on any picture. It is drawn over the photo wherever it is placed.",
+      "description": "A shade over the whole photo, so the badge and the favourite button stay legible on any picture.",
       "tokens": ["component.product-card.media.scrim.base"],
-      "content": "none",
-      "placement": "overlay"
+      "content": "none"
     },
     {
       "name": "ProductCardBody",
@@ -217,7 +217,8 @@
         "slots": {
           "check": {
             "required": false,
-            "for": "ProductCardBodySwatchesSwatchCheck"
+            "for": "ProductCardBodySwatchesSwatchCheck",
+            "placement": "overlay"
           }
         }
       },
@@ -230,7 +231,7 @@
     },
     {
       "name": "ProductCardBodySwatchesSwatchCheck",
-      "description": "The check over a picked swatch. It is drawn over the swatch wherever it is placed.",
+      "description": "The check over a picked swatch.",
       "tokens": ["component.product-card.body.swatches.swatch.check.base"],
       "variants": {
         "position": ["unselected", "selected"]
@@ -238,8 +239,7 @@
       "content": {
         "type": "illustration",
         "name": "Check"
-      },
-      "placement": "overlay"
+      }
     },
     {
       "name": "ProductCardActions",
