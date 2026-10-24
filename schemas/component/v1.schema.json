@@ -60,6 +60,9 @@
         },
         "layout": {
           "$ref": "#/$defs/layout"
+        },
+        "features": {
+          "$ref": "#/$defs/features"
         }
       },
       "additionalProperties": false,
@@ -117,6 +120,19 @@
           }
         }
       ]
+    },
+    "features": {
+      "type": "object",
+      "description": "What kind of element this part is, beyond how it looks. Omitted, every feature has its default.",
+      "minProperties": 1,
+      "properties": {
+        "interactive": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this part is an interactive UI element: a control the user operates, such as a button, a link, a checkbox or a tab. `false`: the user reads or sees it but does not operate it, such as a label, an icon or a badge."
+        }
+      },
+      "additionalProperties": false
     },
     "component-name": {
       "type": "string",

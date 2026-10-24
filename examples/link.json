@@ -10,6 +10,9 @@
         "standalone": [false, true]
       },
       "states": ["enabled", "hovered", "pressed", "focused", "visited"],
+      "features": {
+        "interactive": true
+      },
       "content": {
         "type": "parts",
         "slots": {

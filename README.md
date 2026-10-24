@@ -34,6 +34,7 @@ A file holds one component. `components` lists its parts, the root first. Every 
 | `states`      | The interaction states its tokens style.                                                 |
 | `placement`   | Where it is drawn inside its holder. See [Placement](#placement).                        |
 | `layout`      | How it arranges its own parts. See [Layout](#layout).                                     |
+| `features`    | What kind of element it is. `interactive`: a control the user operates, such as a button. |
 | `description` | What the part is for, in prose, for a reader who meets it without the file.              |
 
 Only `name`, `tokens` and `content` are required.

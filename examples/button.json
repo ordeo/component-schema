@@ -11,6 +11,9 @@
         "size": ["sm", "md", "lg"]
       },
       "states": ["enabled", "hovered", "pressed", "focused", "disabled"],
+      "features": {
+        "interactive": true
+      },
       "content": {
         "type": "parts",
         "slots": {
