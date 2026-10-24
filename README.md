@@ -15,6 +15,7 @@ Reference the versioned URL from a component file, and your IDE validates it:
 ```json
 {
   "$schema": "https://ordeo.github.io/component-schema/component/v1.schema.json",
+  "category": "actions",
   "components": [
     ...
   ]
@@ -23,7 +24,8 @@ Reference the versioned URL from a component file, and your IDE validates it:
 
 ## Files and parts
 
-A file holds one component. `components` lists its parts, the root first. Every part has:
+A file holds one component. `category` (required) groups it with related components by what it is for,
+such as `Actions` or `Data Input`. `components` lists its parts, the root first. Every part has:
 
 | Key           | Meaning                                                                                  |
 |---------------|------------------------------------------------------------------------------------------|

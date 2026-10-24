@@ -1,5 +1,6 @@
 {
   "$schema": "../schemas/component/v1.schema.json",
+  "category": "Data Display",
   "components": [
     {
       "name": "ProductCard",
