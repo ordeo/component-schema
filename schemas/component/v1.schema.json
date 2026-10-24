@@ -696,7 +696,8 @@
           "pressed",
           "focused",
           "disabled",
-          "visited"
+          "visited",
+          "readonly"
         ]
       }
     },

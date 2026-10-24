@@ -117,7 +117,7 @@ or off takes booleans:
 ```
 
 `states` lists the interaction states the part's tokens style: `hovered`, `pressed`, `focused`,
-`disabled` and `visited`. They are not variants: no one picks them, they follow the user's interaction.
+`disabled`, `visited` and `readonly`. They are not variants: no one picks them, they follow the user's interaction.
 
 ```json
 "states": ["hovered", "pressed", "focused", "disabled"]
