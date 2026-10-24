@@ -9,7 +9,7 @@
         "size": ["sm", "md"],
         "elevation": ["none", "raised"]
       },
-      "states": ["enabled", "hovered", "pressed", "focused", "disabled"],
+      "states": ["hovered", "pressed", "focused", "disabled"],
       "content": {
         "type": "parts",
         "slots": {
@@ -162,7 +162,7 @@
       "variants": {
         "size": ["sm", "md"]
       },
-      "states": ["enabled", "hovered", "disabled"],
+      "states": ["hovered", "disabled"],
       "content": {
         "type": "text",
         "maxLines": { "size=sm": 2, "size=md": 3 }
@@ -210,7 +210,7 @@
       "variants": {
         "position": ["unselected", "selected"]
       },
-      "states": ["enabled", "hovered", "pressed", "focused", "disabled"],
+      "states": ["hovered", "pressed", "focused", "disabled"],
       "content": {
         "type": "parts",
         "slots": {

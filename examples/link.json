@@ -9,7 +9,7 @@
         "emphasis": ["high", "low"],
         "standalone": [false, true]
       },
-      "states": ["enabled", "hovered", "pressed", "focused", "visited"],
+      "states": ["hovered", "pressed", "focused", "visited"],
       "features": {
         "interactive": true
       },

@@ -114,11 +114,11 @@ or off takes booleans:
 }
 ```
 
-`states` lists the interaction states the part's tokens style. They are not variants: no one picks
-them, they follow the user's interaction.
+`states` lists the interaction states the part's tokens style: `hovered`, `pressed`, `focused`,
+`disabled` and `visited`. They are not variants: no one picks them, they follow the user's interaction.
 
 ```json
-"states": ["enabled", "hovered", "pressed", "focused", "disabled"]
+"states": ["hovered", "pressed", "focused", "disabled"]
 ```
 
 A part that is the same whatever its holder is set to has no `variants`; one whose tokens style no

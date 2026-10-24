@@ -616,12 +616,12 @@
     },
     "states": {
       "type": "array",
-      "description": "The interaction states this part's tokens style, such as `hovered` or `disabled`. They follow the user's interaction and are not picked like variants.",
+      "description": "The interaction states this part's tokens style. They follow the user's interaction and are not picked like variants. A part with none of them set shows its tokens' base style, so that is not listed.",
       "minItems": 1,
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "pattern": "^[a-z][A-Za-z]*$"
+        "enum": ["hovered", "pressed", "focused", "disabled", "visited"]
       }
     },
     "slot-config": {
