@@ -174,11 +174,14 @@ places itself, so the same part can sit in the flow in one holder and over the b
 - `flow` (default): one of the parts the holder's `layout` arranges.
 - `overlay`: drawn over the holder's box, taking no space. `inline` and `block` say where it sits:
   `start`, `center`, `end` or `stretch` (default, spans the box). A bar along the bottom edge is
-  `"inline": "stretch", "block": "end"`.
+  `"inline": "stretch", "block": "end"`. `layer` says whether it is drawn `above` (default) or
+  `below` the holder's other parts. `below` keeps it over the holder's own background: the
+  indicator behind the label of a picked segment.
 
 ```json
 "placement": "overlay"
 "placement": { "type": "overlay", "inline": "end", "block": "start" }
+"placement": { "type": "overlay", "layer": "below" }
 ```
 
 Offsets come from tokens.
@@ -301,6 +304,7 @@ files.
 | [`examples/button.json`](examples/button.json)             | A small component: variants, states, an open slot, an overlay |
 | [`examples/button-group.json`](examples/button-group.json) | Values that follow variants, including a combination of two axes |
 | [`examples/link.json`](examples/link.json)                 | A `phrase` layout with `block: false`: a link that wraps with its paragraph |
+| [`examples/segmented-control.json`](examples/segmented-control.json) | An overlay with `layer: below`: an indicator drawn behind the label |
 | [`examples/product-card.json`](examples/product-card.json) | Every concept: images, an empty box, text limits, overlays, a grid, lists, own states, slot config |
 
 ## Repository

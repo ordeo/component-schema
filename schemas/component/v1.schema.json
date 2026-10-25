@@ -304,7 +304,7 @@
       ]
     },
     "placement-value": {
-      "description": "Where a part is drawn. `flow`: one of the parts its holder's `layout` arranges, sized and spaced with its siblings. `overlay`: taken out of the flow and drawn over the holder's box, where it takes no space and no gap; `inline` and `block` say where on the box it sits, its offsets come from tokens. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say.",
+      "description": "Where a part is drawn. `flow`: one of the parts its holder's `layout` arranges, sized and spaced with its siblings. `overlay`: taken out of the flow and drawn over the holder's box, where it takes no space and no gap; `inline` and `block` say where on the box it sits, `layer` whether it is drawn above or below the holder's other parts, its offsets come from tokens. The bare word is shorthand for `{ \"type\": <word> }` and is the form to use whenever there is nothing else to say.",
       "oneOf": [
         {
           "type": "string",
@@ -341,6 +341,15 @@
             "block": {
               "$ref": "#/$defs/overlay-alignment",
               "description": "Where the part sits along the holder's block axis (top to bottom)."
+            },
+            "layer": {
+              "type": "string",
+              "enum": [
+                "above",
+                "below"
+              ],
+              "default": "above",
+              "description": "Whether the part is drawn above or below the holder's other parts. `above`: over them, like a spinner over a label. `below`: under them but still over the holder's own background, like the indicator behind the label of a picked segment."
             }
           },
           "additionalProperties": false
