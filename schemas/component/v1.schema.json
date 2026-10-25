@@ -387,7 +387,7 @@
           "$ref": "#/$defs/block"
         },
         "direction": {
-          "description": "Main axis of the layout.",
+          "description": "Main axis of the layout. `row`: the parts in slot order from inline start to inline end. `column`: from top to bottom. `row-reverse` and `column-reverse`: the same axis, but in the opposite order, so the first slot comes last; `justify` `start` and `end` turn with it. Only the drawn order turns: reading and focus keep the slot order.",
           "oneOf": [
             {
               "$ref": "#/$defs/stack-direction"
@@ -773,7 +773,9 @@
       "type": "string",
       "enum": [
         "row",
-        "column"
+        "column",
+        "row-reverse",
+        "column-reverse"
       ]
     },
     "stack-justify": {

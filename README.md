@@ -201,7 +201,9 @@ A placement can follow the variants as a whole; see [Values that follow variants
 - `stack`: the parts in one line along `direction` (`row` or `column`). `justify` distributes them
   along it (`start`, `center`, `end`, `space-between`, `space-around`, `space-evenly`), `align`
   places them across it (`start`, `center`, `end`, `stretch`). `wrap: true` moves them onto further
-  lines when they do not fit.
+  lines when they do not fit. `row-reverse` and `column-reverse` draw the parts in the opposite
+  order, the first slot last; `justify` turns with them, so `start` is where the first slot sits.
+  Reading and focus keep the slot order.
 - `grid`: rows of `columns` equal columns, filled in slot order. `justifyItems` and `alignItems`
   place each part in its cell (`start`, `center`, `end`, `stretch`, default `stretch`).
 - `phrase`: the parts as one run of text, in slot order, the way a sentence is set. A `text` part
